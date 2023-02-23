@@ -3,13 +3,15 @@
 # ------------------------------------------------------
 
 input CreateGoalInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Name of the goal"""
+  name: String!
 }
 
 type Goal {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: ID!
+
+  """The name of the goal"""
+  name: String!
 }
 
 type Mutation {

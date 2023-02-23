@@ -6,6 +6,7 @@ import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { GoalsModule } from './goals/goals.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,11 +18,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [Goal],
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          type: 'sqlite',
+          database:
+            process.env.NODE_ENV === 'test'
+              ? ':memory:'
+              : config.get<string>('DB_NAME'),
+          entities: [Goal],
+          synchronize: true,
+        };
+      },
     }),
   ],
 })
