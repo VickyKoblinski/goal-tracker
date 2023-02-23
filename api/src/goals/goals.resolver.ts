@@ -18,18 +18,18 @@ export class GoalsResolver {
     return this.goalsService.findAll();
   }
 
-  @Query(() => Goal, { name: 'goal' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.goalsService.findOne(id);
-  }
+  // @Query(() => Goal, { name: 'goal' })
+  // findOne(@Args('id', { type: () => Int }) id: number) {
+  //   return this.goalsService.findOne(id);
+  // }
 
-  @Mutation(() => Goal)
-  updateGoal(@Args('updateGoalInput') updateGoalInput: UpdateGoalInput) {
-    return this.goalsService.update(updateGoalInput.id, updateGoalInput);
-  }
+  // @Mutation(() => Goal)
+  // updateGoal(@Args('updateGoalInput') updateGoalInput: UpdateGoalInput) {
+  //   return this.goalsService.update(updateGoalInput.id, updateGoalInput);
+  // }
 
-  @Mutation(() => Goal)
-  removeGoal(@Args('id', { type: () => Int }) id: number) {
-    return this.goalsService.remove(id);
-  }
+  // @Mutation(() => Goal)
+  // removeGoal(@Args('id', { type: () => Int }) id: number) {
+  //   return this.goalsService.remove(id);
+  // }
 }

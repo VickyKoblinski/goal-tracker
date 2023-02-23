@@ -14,17 +14,8 @@ type Goal {
 
 type Mutation {
   createGoal(createGoalInput: CreateGoalInput!): Goal!
-  removeGoal(id: Int!): Goal!
-  updateGoal(updateGoalInput: UpdateGoalInput!): Goal!
 }
 
 type Query {
-  goal(id: Int!): Goal!
   goals: [Goal!]!
-}
-
-input UpdateGoalInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }

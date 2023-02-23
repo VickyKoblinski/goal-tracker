@@ -1,9 +1,11 @@
+import { Goal } from './goals/entities/goal.entity';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { GoalsModule } from './goals/goals.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -14,6 +16,12 @@ import { GoalsModule } from './goals/goals.module';
       sortSchema: true,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    }),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: [Goal],
+      synchronize: true,
     }),
   ],
 })
