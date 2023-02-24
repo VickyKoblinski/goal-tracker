@@ -158,7 +158,7 @@ describe('Goal resolvers (supertest)', () => {
       });
 
       // Delete goal
-      const deleteGoalInput = { id: 1, recursive: true };
+      const deleteGoalInput = { id: 1, deletionStrategy: 'RECURSIVE' };
       const res = await handlers.deleteGoal(deleteGoalInput);
       const { data } = res.body;
       expect(data).not.toBeNull();
@@ -169,7 +169,7 @@ describe('Goal resolvers (supertest)', () => {
       expect(childRes.body.data).toBeNull();
     });
 
-    it.skip('removes parent relationship on delete', async () => {
+    it('deleting child removes it from parent response', async () => {
       // Create a goal
       await handlers.createGoal({
         name: 'My Goal',
@@ -185,11 +185,33 @@ describe('Goal resolvers (supertest)', () => {
       const deleteGoalInput = { id: 2 };
       await handlers.deleteGoal(deleteGoalInput);
 
+      const res = await handlers.findGoal({ id: '1' });
+
+      const { data } = res.body;
+      expect(data).not.toBeNull();
+      expect(data.goal.children).toHaveLength(0);
+    });
+
+    it('can delete parent and orphan children', async () => {
+      // Create a goal
+      await handlers.createGoal({
+        name: 'My Goal',
+      });
+
+      // Create child goal
+      await handlers.createGoal({
+        name: 'My sub Goal',
+        parent: '1',
+      });
+
+      // Delete parent goal
+      await handlers.deleteGoal({ id: 1, deletionStrategy: 'ORPHAN' });
+
       const res = await handlers.findGoal({ id: '2' });
 
       const { data } = res.body;
       expect(data).not.toBeNull();
-      expect(data.deleteGoal.id).toBe('1');
+      expect(data.goal.parent).toBeNull();
     });
   });
 });

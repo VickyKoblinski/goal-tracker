@@ -11,9 +11,13 @@ input CreateGoalInput {
 }
 
 input DeleteGoalInput {
+  deletionStrategy: DeleteGoalStrategy
   id: ID!
-  orphan: Boolean! = false
-  recursive: Boolean! = false
+}
+
+enum DeleteGoalStrategy {
+  ORPHAN
+  RECURSIVE
 }
 
 type Goal {

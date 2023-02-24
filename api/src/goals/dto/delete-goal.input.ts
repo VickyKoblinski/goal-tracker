@@ -1,13 +1,19 @@
-import { InputType, Field, ID } from '@nestjs/graphql';
+import { InputType, Field, ID, registerEnumType } from '@nestjs/graphql';
+
+export enum DeleteGoalStrategy {
+  RECURSIVE = 'recursive',
+  ORPHAN = 'orphan',
+}
+
+registerEnumType(DeleteGoalStrategy, {
+  name: 'DeleteGoalStrategy',
+});
 
 @InputType()
 export class DeleteGoalInput {
   @Field(() => ID)
   id: number;
 
-  @Field(() => Boolean, { defaultValue: false })
-  recursive?: boolean;
-
-  @Field(() => Boolean, { defaultValue: false })
-  orphan?: boolean;
+  @Field(() => DeleteGoalStrategy, { nullable: true })
+  deletionStrategy?: DeleteGoalStrategy;
 }
