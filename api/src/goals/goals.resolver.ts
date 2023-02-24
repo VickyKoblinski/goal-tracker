@@ -12,6 +12,7 @@ import { GoalsService } from './goals.service';
 import { Goal } from './entities/goal.entity';
 import { CreateGoalInput } from './dto/create-goal.input';
 import { UpdateGoalInput } from './dto/update-goal.input';
+import { DeleteGoalInput } from './dto/delete-goal.input';
 
 @Resolver(() => Goal)
 export class GoalsResolver {
@@ -48,8 +49,8 @@ export class GoalsResolver {
   //   return this.goalsService.update(updateGoalInput.id, updateGoalInput);
   // }
 
-  // @Mutation(() => Goal)
-  // removeGoal(@Args('id', { type: () => Int }) id: number) {
-  //   return this.goalsService.remove(id);
-  // }
+  @Mutation(() => Goal)
+  deleteGoal(@Args('deleteGoalInput') deleteGoalInput: DeleteGoalInput) {
+    return this.goalsService.remove(deleteGoalInput);
+  }
 }

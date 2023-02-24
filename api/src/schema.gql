@@ -10,6 +10,12 @@ input CreateGoalInput {
   parent: ID
 }
 
+input DeleteGoalInput {
+  id: ID!
+  orphan: Boolean! = false
+  recursive: Boolean! = false
+}
+
 type Goal {
   """Subtasks"""
   children: [Goal!]
@@ -24,6 +30,7 @@ type Goal {
 
 type Mutation {
   createGoal(createGoalInput: CreateGoalInput!): Goal!
+  deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
 }
 
 type Query {

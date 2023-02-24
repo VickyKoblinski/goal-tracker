@@ -24,7 +24,7 @@ export class Goal {
     nullable: true,
     defaultValue: null,
   })
-  @ManyToOne(() => Goal, (goal) => goal)
+  @ManyToOne(() => Goal, (goal) => goal.children)
   parent: Goal;
 
   @Column({ nullable: true })
@@ -34,6 +34,6 @@ export class Goal {
     description: 'Subtasks',
     nullable: true,
   })
-  @OneToMany(() => Goal, (goal) => goal)
+  @OneToMany(() => Goal, (goal) => goal.parent)
   children: Goal[];
 }
