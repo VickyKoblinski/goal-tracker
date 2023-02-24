@@ -1,0 +1,31 @@
+name: CI
+on: push
+jobs:
+  api-unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.26.3
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: pnpm install
+      - name: Run tests
+        run: pnpm run test
+  api-e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.26.3
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: pnpm install
+      - name: Run tests
+        run: pnpm run test:e2e
