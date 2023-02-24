@@ -6,6 +6,7 @@ import {
   Int,
   ResolveField,
   Parent,
+  ID,
 } from '@nestjs/graphql';
 import { GoalsService } from './goals.service';
 import { Goal } from './entities/goal.entity';
@@ -29,14 +30,18 @@ export class GoalsResolver {
   @ResolveField('parent', (returns) => Goal)
   parent(@Parent() goal: Goal) {
     if (!goal.parentId) return null;
-
-    return this.goalsService.findOne({ id: goal.parentId });
+    return this.goalsService.findOne(goal.parentId);
   }
 
-  // @Query(() => Goal, { name: 'goal' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.goalsService.findOne(id);
-  // }
+  @ResolveField('children', (returns) => [Goal])
+  children(@Parent() goal: Goal) {
+    return this.goalsService.findAllChildren(goal.id);
+  }
+
+  @Query(() => Goal, { name: 'goal' })
+  findOne(@Args('id', { type: () => ID }) id: number) {
+    return this.goalsService.findOne(id);
+  }
 
   // @Mutation(() => Goal)
   // updateGoal(@Args('updateGoalInput') updateGoalInput: UpdateGoalInput) {

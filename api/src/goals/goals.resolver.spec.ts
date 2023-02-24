@@ -49,4 +49,47 @@ describe('GoalsResolver', () => {
       expect(service.findAll).toHaveBeenCalled();
     });
   });
+
+  describe('findOne', () => {
+    it('should return one Goal', async () => {
+      const mockGoal = new Goal();
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockGoal);
+      const result = await resolver.findOne(1);
+      expect(result).toBe(mockGoal);
+      expect(service.findOne).toHaveBeenCalled();
+    });
+  });
+
+  describe('children', () => {
+    it('should return the children', async () => {
+      const mockChildren = [new Goal()];
+      jest.spyOn(service, 'findAllChildren').mockResolvedValue(mockChildren);
+      const result = await resolver.children(new Goal());
+      expect(result).toBe(mockChildren);
+      expect(service.findAllChildren).toHaveBeenCalled();
+    });
+  });
+
+  describe('parent', () => {
+    it('should return the parent', async () => {
+      const mockParent = new Goal();
+      const mockRoot = new Goal();
+      mockRoot.parentId = 7;
+
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockParent);
+      const result = await resolver.parent(mockRoot);
+      expect(result).toBe(mockParent);
+      expect(service.findOne).toHaveBeenCalled();
+    });
+
+    it('should return null when parentId is not defined', async () => {
+      const mockParent = new Goal();
+      const mockRoot = new Goal();
+
+      jest.spyOn(service, 'findOne').mockResolvedValue(mockParent);
+      const result = await resolver.parent(mockRoot);
+      expect(result).toBe(null);
+      expect(service.findOne).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -13,7 +13,7 @@ import {
 export class Goal {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Field({ description: 'The name of the goal' })
   @Column()
@@ -28,12 +28,12 @@ export class Goal {
   parent: Goal;
 
   @Column({ nullable: true })
-  parentId: string;
+  parentId: number;
 
   @Field((type) => [Goal], {
     description: 'Subtasks',
     nullable: true,
   })
-  @OneToMany(() => Goal, (goal) => goal.parent)
+  @OneToMany(() => Goal, (goal) => goal)
   children: Goal[];
 }

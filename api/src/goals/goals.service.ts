@@ -33,13 +33,13 @@ export class GoalsService {
     return this.goalRepository.find();
   }
 
-  findOne({ id }: { id: string }) {
-    return this.goalRepository.findOne({ where: { id } });
+  findAllChildren(parentId: number) {
+    return this.goalRepository.find({ where: { parentId } });
   }
 
-  // findOne(id: number) {
-  //   return 2;
-  // }
+  findOne(id: number) {
+    return this.goalRepository.findOne({ where: { id } });
+  }
 
   // update(id: number, updateGoalInput: UpdateGoalInput) {
   //   return `This action updates a #${id} goal`;

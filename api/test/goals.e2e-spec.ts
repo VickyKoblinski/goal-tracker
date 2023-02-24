@@ -70,10 +70,41 @@ describe('Goal resolvers (supertest)', () => {
         .expect(200);
 
       const { data } = res.body;
-      console.log(data);
       expect(data.createGoal.id).toBeDefined();
       expect(data.createGoal.name).toBe(createGoalInput.name);
       expect(data.createGoal.parent.name).toBe('My Goal');
+    });
+  });
+
+  describe('find', () => {
+    it('should have child goals', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `
+          query FindGoal($id: ID!) {
+            goal(id: $id) {
+              id
+              name
+              children {
+                name
+                id
+              }
+            }
+          }
+        `,
+          variables: { id: '1' },
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      const { data } = res.body;
+      expect(data.goal.id).toBeDefined();
+      expect(data.goal.name).toBe('My Goal');
+      expect(data.goal.children).toBeDefined();
+      expect(data.goal.children.length).toBe(1);
+      expect(data.goal.children[0].name).toBe('My sub Goal');
     });
   });
 

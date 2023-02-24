@@ -6,5 +6,5 @@ export class CreateGoalInput {
   name: string;
 
   @Field(() => ID, { description: 'The parent goal', nullable: true })
-  parent?: string;
+  parent?: number;
 }

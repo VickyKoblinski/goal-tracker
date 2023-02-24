@@ -27,5 +27,6 @@ type Mutation {
 }
 
 type Query {
+  goal(id: ID!): Goal!
   goals: [Goal!]!
 }
