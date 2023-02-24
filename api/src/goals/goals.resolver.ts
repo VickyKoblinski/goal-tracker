@@ -1,4 +1,12 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { GoalsService } from './goals.service';
 import { Goal } from './entities/goal.entity';
 import { CreateGoalInput } from './dto/create-goal.input';
@@ -16,6 +24,13 @@ export class GoalsResolver {
   @Query(() => [Goal], { name: 'goals' })
   findAll() {
     return this.goalsService.findAll();
+  }
+
+  @ResolveField('parent', (returns) => Goal)
+  parent(@Parent() goal: Goal) {
+    if (!goal.parentId) return null;
+
+    return this.goalsService.findOne({ id: goal.parentId });
   }
 
   // @Query(() => Goal, { name: 'goal' })

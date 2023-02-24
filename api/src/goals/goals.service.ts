@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateGoalInput } from './dto/create-goal.input';
 import { UpdateGoalInput } from './dto/update-goal.input';
@@ -12,13 +12,29 @@ export class GoalsService {
     private goalRepository: Repository<Goal>,
   ) {}
 
-  create(createGoalInput: CreateGoalInput) {
-    const goal = this.goalRepository.create(createGoalInput);
+  async create(createGoalInput: CreateGoalInput) {
+    const params: Partial<Goal> = {
+      name: createGoalInput.name,
+    };
+
+    if (createGoalInput.parent) {
+      const parent = await this.goalRepository.findOne({
+        where: { id: createGoalInput.parent },
+      });
+      if (!parent) throw new NotFoundException('parent goal not found');
+      params.parent = parent;
+    }
+
+    const goal = this.goalRepository.create(params);
     return this.goalRepository.save(goal);
   }
 
   findAll() {
     return this.goalRepository.find();
+  }
+
+  findOne({ id }: { id: string }) {
+    return this.goalRepository.findOne({ where: { id } });
   }
 
   // findOne(id: number) {

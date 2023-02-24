@@ -42,6 +42,39 @@ describe('Goal resolvers (supertest)', () => {
       expect(data.createGoal.id).toBeDefined();
       expect(data.createGoal.name).toBe(createGoalInput.name);
     });
+
+    it('should create a subgoal', async () => {
+      const createGoalInput = {
+        name: 'My sub Goal',
+        parent: '1',
+      };
+
+      const res = await request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `
+          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
+            createGoal(createGoalInput: $createGoalInput) {
+              id
+              name
+              parent {
+                name
+              }
+            }
+          }
+        `,
+          variables: { createGoalInput },
+        })
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      const { data } = res.body;
+      console.log(data);
+      expect(data.createGoal.id).toBeDefined();
+      expect(data.createGoal.name).toBe(createGoalInput.name);
+      expect(data.createGoal.parent.name).toBe('My Goal');
+    });
   });
 
   describe('findAll', () => {
@@ -64,7 +97,7 @@ describe('Goal resolvers (supertest)', () => {
 
       const { data } = res.body;
       expect(data.goals).toBeDefined();
-      expect(data.goals.length).toBe(1);
+      expect(data.goals.length).toBe(2);
     });
   });
 });

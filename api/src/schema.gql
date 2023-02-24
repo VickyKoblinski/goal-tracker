@@ -5,13 +5,21 @@
 input CreateGoalInput {
   """Name of the goal"""
   name: String!
+
+  """The parent goal"""
+  parent: ID
 }
 
 type Goal {
+  """Subtasks"""
+  children: [Goal!]
   id: ID!
 
   """The name of the goal"""
   name: String!
+
+  """The parent goal"""
+  parent: Goal
 }
 
 type Mutation {
