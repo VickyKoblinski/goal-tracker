@@ -25,6 +25,6 @@ export class AppResolver {
   @Mutation(() => Auth)
   async login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
     const login = await this.authService.login(loginUserInput);
-    return { jwt: login.access_token };
+    return { token: login.access_token };
   }
 }

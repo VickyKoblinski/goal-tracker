@@ -4,7 +4,7 @@
 
 type Auth {
   """JWT Access Token"""
-  jwt: String!
+  token: String!
 }
 
 input CreateGoalInput {
@@ -61,9 +61,6 @@ type Query {
 type User {
   """User ID"""
   id: ID!
-
-  """Password"""
-  password: ID!
 
   """Username"""
   username: ID!

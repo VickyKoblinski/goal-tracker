@@ -8,6 +8,5 @@ export class User {
   @Field(() => ID, { description: 'Username' })
   username: string;
 
-  @Field(() => ID, { description: 'Password' })
   password: string;
 }
