@@ -3,13 +3,8 @@
 # ------------------------------------------------------
 
 type Auth {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input CreateAuthInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """JWT Access Token"""
+  jwt: String!
 }
 
 input CreateGoalInput {
@@ -18,11 +13,6 @@ input CreateGoalInput {
 
   """The parent goal"""
   parent: ID
-}
-
-input CreateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
 }
 
 input DeleteGoalInput {
@@ -47,38 +37,34 @@ type Goal {
   parent: Goal
 }
 
+input LoginUserInput {
+  """Password"""
+  password: String!
+
+  """Username"""
+  username: String!
+}
+
 type Mutation {
-  createAuth(createAuthInput: CreateAuthInput!): Auth!
   createGoal(createGoalInput: CreateGoalInput!): Goal!
-  createUser(createUserInput: CreateUserInput!): User!
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
-  removeAuth(id: Int!): Auth!
-  removeUser(id: Int!): User!
-  updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  login(loginUserInput: LoginUserInput!): Auth!
 }
 
 type Query {
-  auth(id: Int!): Auth!
   goal(id: ID!): Goal!
   goals: [Goal!]!
-  user(id: Int!): User!
-  users: [User!]!
-}
-
-input UpdateAuthInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input UpdateUserInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  user(username: String!): User!
+  whoAmI: User!
 }
 
 type User {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """User ID"""
+  id: ID!
+
+  """Password"""
+  password: ID!
+
+  """Username"""
+  username: ID!
 }

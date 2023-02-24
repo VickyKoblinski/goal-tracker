@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { AppResolver } from './app.resolver';
 
 @Module({
   imports: [
@@ -29,10 +30,7 @@ import { UsersModule } from './users/users.module';
       useFactory: (config: ConfigService) => {
         return {
           type: 'sqlite',
-          database:
-            process.env.NODE_ENV === 'test'
-              ? ':memory:'
-              : config.get<string>('DB_NAME'),
+          database: config.get<string>('DB_NAME'),
           entities: [Goal],
           synchronize: true,
         };
@@ -41,5 +39,6 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
   ],
+  providers: [AppResolver],
 })
 export class AppModule {}
