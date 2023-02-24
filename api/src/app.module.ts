@@ -7,6 +7,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { GoalsModule } from './goals/goals.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         };
       },
     }),
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

@@ -2,12 +2,27 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Auth {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreateGoalInput {
   """Name of the goal"""
   name: String!
 
   """The parent goal"""
   parent: ID
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 input DeleteGoalInput {
@@ -33,11 +48,37 @@ type Goal {
 }
 
 type Mutation {
+  createAuth(createAuthInput: CreateAuthInput!): Auth!
   createGoal(createGoalInput: CreateGoalInput!): Goal!
+  createUser(createUserInput: CreateUserInput!): User!
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
+  removeAuth(id: Int!): Auth!
+  removeUser(id: Int!): User!
+  updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
+  auth(id: Int!): Auth!
   goal(id: ID!): Goal!
   goals: [Goal!]!
+  user(id: Int!): User!
+  users: [User!]!
+}
+
+input UpdateAuthInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+type User {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
