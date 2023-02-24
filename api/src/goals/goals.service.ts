@@ -85,9 +85,7 @@ export class GoalsService {
 
     // If deletionStrategy is ORPHAN and there are child entities, update their parent to null
     if (deletionStrategy === DeleteGoalStrategy.ORPHAN) {
-      const children = await this.goalRepository.find({
-        where: { parentId: id },
-      });
+      const children = parentEntity.children;
       if (children.length) {
         await this.goalRepository.update(
           { parent: parentEntity },

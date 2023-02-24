@@ -3,7 +3,8 @@ import { GoalsService } from './goals.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Goal } from './entities/goal.entity';
-import { NotFoundException } from '@nestjs/common';
+import { MethodNotAllowedException, NotFoundException } from '@nestjs/common';
+import { DeleteGoalStrategy } from './dto/delete-goal.input';
 
 describe('GoalsService', () => {
   let goalsService: GoalsService;
@@ -98,6 +99,75 @@ describe('GoalsService', () => {
       const result = await goalsService.findOne(7);
       expect(result).toBe(mockGoal);
       expect(goalRepository.findOne).toHaveBeenCalled();
+    });
+  });
+
+  describe('remove', () => {
+    it('Removes entity and returns a copy', async () => {
+      const mockGoal = new Goal();
+      mockGoal.id = 1;
+      mockGoal.children = [];
+      jest.spyOn(goalRepository, 'findOne').mockResolvedValue(mockGoal);
+      jest.spyOn(goalRepository, 'remove').mockResolvedValue(null);
+      const result = await goalsService.remove({ id: 1 });
+      expect(result).not.toBe(mockGoal);
+      expect(result).toMatchObject(mockGoal);
+      expect(goalRepository.findOne).toHaveBeenCalled();
+      expect(goalRepository.remove).toHaveBeenCalled();
+    });
+
+    it('Throws an error if the goal has children', async () => {
+      const mockGoal = new Goal();
+      mockGoal.id = 1;
+      mockGoal.children = [new Goal()];
+      jest.spyOn(goalRepository, 'findOne').mockResolvedValue(mockGoal);
+      jest.spyOn(goalRepository, 'remove').mockResolvedValue(null);
+      await expect(goalsService.remove({ id: 1 })).rejects.toThrow(
+        MethodNotAllowedException,
+      );
+    });
+
+    it('recursively removes children', async () => {
+      const mockGoal = new Goal();
+      mockGoal.id = 1;
+      const mockChildGoal = new Goal();
+      mockChildGoal.id = 2;
+      mockChildGoal.children = [];
+      mockGoal.children = [mockChildGoal];
+      jest
+        .spyOn(goalRepository, 'findOne')
+        .mockResolvedValueOnce(mockGoal)
+        .mockResolvedValueOnce(mockChildGoal);
+      jest.spyOn(goalRepository, 'remove').mockResolvedValue(null);
+      await goalsService.remove({
+        id: 1,
+        deletionStrategy: DeleteGoalStrategy.RECURSIVE,
+      });
+    });
+
+    it('removes orphaned children', async () => {
+      const mockGoal = new Goal();
+      mockGoal.id = 1;
+      const mockChildGoal = new Goal();
+      mockChildGoal.id = 2;
+      mockChildGoal.children = [];
+      mockGoal.children = [mockChildGoal];
+      jest.spyOn(goalRepository, 'findOne').mockResolvedValue(mockGoal);
+      jest.spyOn(goalRepository, 'update').mockResolvedValue(null);
+      jest.spyOn(goalRepository, 'remove').mockResolvedValue(null);
+      await goalsService.remove({
+        id: 1,
+        deletionStrategy: DeleteGoalStrategy.ORPHAN,
+      });
+    });
+
+    it('throws an error if parent entity is not found', async () => {
+      jest.spyOn(goalRepository, 'findOne').mockResolvedValue(null);
+      await expect(
+        goalsService.remove({
+          id: 1,
+        }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
