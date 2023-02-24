@@ -1,13 +1,15 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import Handlers from './goals.handlers';
 
 describe('Goal resolvers (supertest)', () => {
   let app: INestApplication;
+  let handlers: Handlers;
 
   beforeAll(async () => {
     app = await createTestApp();
+    handlers = new Handlers(app);
   });
 
   afterAll(async () => {
@@ -20,22 +22,7 @@ describe('Goal resolvers (supertest)', () => {
         name: 'My Goal',
       };
 
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-              createGoal(createGoalInput: $createGoalInput) {
-                id
-                name
-              }
-            }
-          `,
-          variables: { createGoalInput },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.createGoal(createGoalInput);
 
       const { data } = res.body;
 
@@ -49,25 +36,7 @@ describe('Goal resolvers (supertest)', () => {
         parent: '1',
       };
 
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-              parent {
-                name
-              }
-            }
-          }
-        `,
-          variables: { createGoalInput },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.createGoal(createGoalInput);
 
       const { data } = res.body;
       expect(data.createGoal.id).toBeDefined();
@@ -78,26 +47,7 @@ describe('Goal resolvers (supertest)', () => {
 
   describe('find', () => {
     it('should have child goals', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          query FindGoal($id: ID!) {
-            goal(id: $id) {
-              id
-              name
-              children {
-                name
-                id
-              }
-            }
-          }
-        `,
-          variables: { id: '1' },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.findGoal({ id: '1' });
 
       const { data } = res.body;
       expect(data.goal.id).toBeDefined();
@@ -110,21 +60,7 @@ describe('Goal resolvers (supertest)', () => {
 
   describe('findAll', () => {
     it('should return an array of goals', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            query FindAllGoals {
-              goals {
-                id
-                name
-              }
-            }
-          `,
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.findAllGoals();
 
       const { data } = res.body;
       expect(data.goals).toBeDefined();
@@ -135,6 +71,7 @@ describe('Goal resolvers (supertest)', () => {
   describe('remove', () => {
     beforeEach(async () => {
       app = await createTestApp();
+      handlers = new Handlers(app);
     });
 
     afterEach(async () => {
@@ -147,56 +84,19 @@ describe('Goal resolvers (supertest)', () => {
         name: 'My sub Goal',
       };
 
-      const createRes = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-            }
-          }
-        `,
-          variables: { createGoalInput },
-        })
-        .set('Accept', 'application/json');
+      const createRes = await handlers.createGoal(createGoalInput);
       const { data: resData } = createRes.body;
 
       // Delete goal
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation DeleteGoal($deleteGoalInput: DeleteGoalInput!) {
-              deleteGoal(deleteGoalInput: $deleteGoalInput) {
-                id
-              }
-            }
-          `,
-          variables: { deleteGoalInput: { id: resData.createGoal.id } },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.deleteGoal({ id: resData.createGoal.id });
+
       const { data: deletedData } = res.body;
 
       expect(deletedData.deleteGoal.id).toBeDefined();
       expect(deletedData.deleteGoal.id).toBe('1');
 
       // Fetch all goals
-      const resGoals = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            query FindAllGoals {
-              goals {
-                id
-              }
-            }
-          `,
-        })
-        .set('Accept', 'application/json');
+      const resGoals = await handlers.findAllGoals();
 
       const { data } = resGoals.body;
       expect(data.goals).toBeDefined();
@@ -205,21 +105,8 @@ describe('Goal resolvers (supertest)', () => {
 
     it("should throw an error when trying to delete a goal that doesn't exist", async () => {
       // Delete goal
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation DeleteGoal($deleteGoalInput: DeleteGoalInput!) {
-              deleteGoal(deleteGoalInput: $deleteGoalInput) {
-                id
-              }
-            }
-          `,
-          variables: { deleteGoalInput: { id: '1' } },
-        })
-        .set('Accept', 'application/json')
+      const res = await handlers.deleteGoal({ id: '1' }).expect(200);
 
-        .expect(200);
       const { errors } = res.body;
       expect(errors).toMatchObject([
         {
@@ -238,62 +125,19 @@ describe('Goal resolvers (supertest)', () => {
 
     it('cannot delete a goal that has children', async () => {
       // Create a goal
-      await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-            }
-          }
-        `,
-          variables: {
-            createGoalInput: {
-              name: 'My Goal',
-            },
-          },
-        })
-        .set('Accept', 'application/json');
+      await handlers.createGoal({
+        name: 'My Goal',
+      });
 
       // Create child goal
-      await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-            }
-          }
-        `,
-          variables: {
-            createGoalInput: {
-              name: 'My sub Goal',
-              parent: '1',
-            },
-          },
-        })
-        .set('Accept', 'application/json');
+      await handlers.createGoal({
+        name: 'My sub Goal',
+        parent: '1',
+      });
 
       // Delete goal
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation DeleteGoal($deleteGoalInput: DeleteGoalInput!) {
-              deleteGoal(deleteGoalInput: $deleteGoalInput) {
-                id
-              }
-            }
-          `,
-          variables: { deleteGoalInput: { id: '1' } },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.deleteGoal({ id: '1' });
+
       const { errors } = res.body;
       expect(errors).toHaveLength(1);
       expect(errors[0].message).toBe(
@@ -303,71 +147,50 @@ describe('Goal resolvers (supertest)', () => {
 
     it('removes parent and all children', async () => {
       // Create a goal
-      await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-            }
-          }
-        `,
-          variables: {
-            createGoalInput: {
-              name: 'My Goal',
-            },
-          },
-        })
-        .set('Accept', 'application/json');
+      await handlers.createGoal({
+        name: 'My Goal',
+      });
 
       // Create child goal
-      await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-          mutation CreateGoal($createGoalInput: CreateGoalInput!) {
-            createGoal(createGoalInput: $createGoalInput) {
-              id
-              name
-            }
-          }
-        `,
-          variables: {
-            createGoalInput: {
-              name: 'My sub Goal',
-              parent: '1',
-            },
-          },
-        })
-        .set('Accept', 'application/json');
+      await handlers.createGoal({
+        name: 'My sub Goal',
+        parent: '1',
+      });
 
       // Delete goal
       const deleteGoalInput = { id: 1, recursive: true };
-      const res = await request(app.getHttpServer())
-        .post('/graphql')
-        .send({
-          query: `
-            mutation DeleteGoal($deleteGoalInput: DeleteGoalInput!) {
-              deleteGoal(deleteGoalInput: $deleteGoalInput) {
-                id
-              }
-            }
-          `,
-          variables: {
-            deleteGoalInput,
-          },
-        })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
-        .expect(200);
+      const res = await handlers.deleteGoal(deleteGoalInput);
+      const { data } = res.body;
+      expect(data).not.toBeNull();
+      expect(data.deleteGoal.id).toBe('1');
+
+      const childRes = await handlers.findGoal({ id: '2' });
+
+      expect(childRes.body.data).toBeNull();
+    });
+
+    it.skip('removes parent relationship on delete', async () => {
+      // Create a goal
+      await handlers.createGoal({
+        name: 'My Goal',
+      });
+
+      // Create child goal
+      await handlers.createGoal({
+        name: 'My sub Goal',
+        parent: '1',
+      });
+
+      // Delete child goal
+      const deleteGoalInput = { id: 2 };
+      await handlers.deleteGoal(deleteGoalInput);
+
+      const res = await handlers.findGoal({ id: '2' });
+
       const { data } = res.body;
       expect(data).not.toBeNull();
       expect(data.deleteGoal.id).toBe('1');
     });
-
-    it('removes parent relationship on delete', () => {});
   });
 });
 
