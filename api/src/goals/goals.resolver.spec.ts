@@ -4,6 +4,7 @@ import { GoalsService } from './goals.service';
 import { Goal } from './entities/goal.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ID } from '@nestjs/graphql';
 
 describe('GoalsResolver', () => {
   let resolver: GoalsResolver;
@@ -14,6 +15,12 @@ describe('GoalsResolver', () => {
       providers: [
         GoalsResolver,
         GoalsService,
+        // {
+        //   provide: GoalsService,
+        //   useValue: {
+        //     findOne: jest.fn(),
+        //   },
+        // },
         {
           provide: getRepositoryToken(Goal),
           useClass: Repository,
@@ -27,6 +34,25 @@ describe('GoalsResolver', () => {
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe.skip('findOne', () => {
+    const id = 1;
+
+    it('should call GoalsService.findOne with the provided ID', async () => {
+      await resolver.findOne(id);
+      expect(service.findOne).toHaveBeenCalledWith(id);
+    });
+
+    it('should return the result of GoalsService.findOne', async () => {
+      const expectedResult = new Goal();
+      expectedResult.id = id;
+      expectedResult.name = 'test goal';
+      jest.spyOn(service, 'findOne').mockResolvedValue(expectedResult);
+
+      const result = await resolver.findOne(id);
+      expect(result).toEqual(expectedResult);
+    });
   });
 
   describe('createGoal', () => {

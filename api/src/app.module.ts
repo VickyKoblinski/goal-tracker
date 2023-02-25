@@ -7,6 +7,10 @@ import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 import { GoalsModule } from './goals/goals.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { AppResolver } from './app.resolver';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -27,15 +31,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: (config: ConfigService) => {
         return {
           type: 'sqlite',
-          database:
-            process.env.NODE_ENV === 'test'
-              ? ':memory:'
-              : config.get<string>('DB_NAME'),
-          entities: [Goal],
+          database: config.get<string>('DB_NAME'),
+          entities: [Goal, User],
           synchronize: true,
         };
       },
     }),
+    AuthModule,
+    UsersModule,
   ],
+  providers: [AppResolver],
 })
 export class AppModule {}

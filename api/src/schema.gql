@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Auth {
+  """JWT Access Token"""
+  token: String!
+}
+
 input CreateGoalInput {
   """Name of the goal"""
   name: String!
@@ -32,12 +37,32 @@ type Goal {
   parent: Goal
 }
 
+input LoginUserInput {
+  """Password"""
+  password: String!
+
+  """Username"""
+  username: String!
+}
+
 type Mutation {
   createGoal(createGoalInput: CreateGoalInput!): Goal!
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
+  login(loginUserInput: LoginUserInput!): Auth!
+  signup(loginUserInput: LoginUserInput!): Auth!
 }
 
 type Query {
   goal(id: ID!): Goal!
   goals: [Goal!]!
+  user(username: String!): User!
+  whoAmI: User!
+}
+
+type User {
+  """User ID"""
+  id: ID!
+
+  """Username"""
+  username: ID!
 }
