@@ -27,7 +27,7 @@ export class UsersService {
 
   async create(createUserInput: CreateUserInput) {
     const user = this.userRepository.create(createUserInput);
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
     return user;
   }
 

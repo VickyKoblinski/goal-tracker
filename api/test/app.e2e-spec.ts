@@ -7,6 +7,10 @@ describe('Goal resolvers (supertest)', () => {
   let app: INestApplication;
   let unauthHandlers: Handlers;
   let authHandlers: Handlers;
+  const loginUserInput = {
+    username: 'john',
+    password: 'changeme',
+  };
 
   beforeAll(async () => {
     app = await createTestApp();
@@ -17,13 +21,22 @@ describe('Goal resolvers (supertest)', () => {
     await app.close();
   });
 
+  describe('signup', () => {
+    it('creates a new user', async () => {
+      const res = await unauthHandlers.signup(loginUserInput);
+
+      const { data } = res.body;
+
+      expect(data.signup.token).toBeDefined();
+    });
+
+    it.skip('cannot create a new user with a shared username', () => {
+      // TODO
+    });
+  });
+
   describe('login', () => {
     it('get jwt from valid login', async () => {
-      const loginUserInput = {
-        username: 'john',
-        password: 'changeme',
-      };
-
       const res = await unauthHandlers.login(loginUserInput);
 
       const { data } = res.body;
