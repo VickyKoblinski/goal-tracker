@@ -82,7 +82,7 @@ describe('AuthService', () => {
     });
   });
 
-  describe('signup', () => {
+  describe('register', () => {
     it('should return a jwt when a user signs up', async () => {
       const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
       jest.spyOn(encrypt, 'hashPassword').mockResolvedValue('hashed');
@@ -91,7 +91,7 @@ describe('AuthService', () => {
         username: 'testuser',
         id: 1,
       });
-      const result = await authService.signup({
+      const result = await authService.register({
         username: 'testuser',
         password: 'testpass',
       });

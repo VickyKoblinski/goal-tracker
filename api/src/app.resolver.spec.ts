@@ -91,13 +91,13 @@ describe('AppResolver', () => {
     });
   });
 
-  describe('signup', () => {
-    it('should signup user and return token', async () => {
+  describe('register', () => {
+    it('should register user and return token', async () => {
       jest
-        .spyOn(authService, 'signup')
+        .spyOn(authService, 'register')
         .mockResolvedValue({ access_token: 'token' });
 
-      const result = await resolver.signup({
+      const result = await resolver.register({
         username: 'testuser',
         password: 'testpass',
       });

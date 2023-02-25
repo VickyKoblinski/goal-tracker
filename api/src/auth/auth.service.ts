@@ -27,7 +27,7 @@ export class AuthService {
     };
   }
 
-  async signup(createUserInput: CreateUserInput) {
+  async register(createUserInput: CreateUserInput) {
     const hashedPassword = await hashPassword(createUserInput.password);
     const newUser = await this.usersService.create({
       username: createUserInput.username,

@@ -21,13 +21,13 @@ describe('Goal resolvers (supertest)', () => {
     await app.close();
   });
 
-  describe('signup', () => {
+  describe('register', () => {
     it('creates a new user', async () => {
-      const res = await unauthHandlers.signup(loginUserInput);
+      const res = await unauthHandlers.register(loginUserInput);
 
       const { data } = res.body;
 
-      expect(data.signup.token).toBeDefined();
+      expect(data.register.token).toBeDefined();
     });
 
     it.skip('cannot create a new user with a shared username', () => {

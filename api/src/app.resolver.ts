@@ -29,8 +29,8 @@ export class AppResolver {
   }
 
   @Mutation(() => Auth)
-  async signup(@Args('loginUserInput') loginUserInput: LoginUserInput) {
-    const login = await this.authService.signup(loginUserInput);
+  async register(@Args('loginUserInput') loginUserInput: LoginUserInput) {
+    const login = await this.authService.register(loginUserInput);
     return { token: login.access_token };
   }
 }
