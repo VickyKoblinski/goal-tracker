@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AppResolver } from './app.resolver';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AppResolver } from './app.resolver';
         return {
           type: 'sqlite',
           database: config.get<string>('DB_NAME'),
-          entities: [Goal],
+          entities: [Goal, User],
           synchronize: true,
         };
       },

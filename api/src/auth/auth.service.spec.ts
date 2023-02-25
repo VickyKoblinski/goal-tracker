@@ -4,6 +4,8 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 import * as encrypt from './encrypt';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -21,12 +23,20 @@ describe('AuthService', () => {
             sign: jest.fn<User, []>(),
           },
         },
+        {
+          provide: getRepositoryToken(User),
+          useClass: Repository,
+        },
       ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
     usersService = module.get<UsersService>(UsersService);
     jwtService = module.get<JwtService>(JwtService);
+  });
+
+  it('should be defined', () => {
+    expect(authService).toBeDefined();
   });
 
   describe('validateUser', () => {

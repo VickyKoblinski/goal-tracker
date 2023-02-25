@@ -6,6 +6,8 @@ import { AuthService } from './auth/auth.service';
 import { User } from './users/entities/user.entity';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 describe('AppResolver', () => {
   let resolver: AppResolver;
@@ -14,12 +16,25 @@ describe('AppResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AppResolver, UsersService, AuthService, JwtService],
+      providers: [
+        AppResolver,
+        UsersService,
+        AuthService,
+        JwtService,
+        {
+          provide: getRepositoryToken(User),
+          useClass: Repository,
+        },
+      ],
     }).compile();
 
     resolver = module.get<AppResolver>(AppResolver);
     usersService = module.get<UsersService>(UsersService);
     authService = module.get<AuthService>(AuthService);
+  });
+
+  it('should be defined', () => {
+    expect(resolver).toBeDefined();
   });
 
   describe('whoAmI', () => {
