@@ -24,7 +24,8 @@ describe('UsersService', () => {
       const expectedUser: User = {
         id: 1,
         username: 'john',
-        password: 'changeme',
+        password:
+          '$2b$10$Dot1qjkYa5IXEs80gzTWQ.Xw.IFgcYat31FhCGIL1m3MueNO9Fxde',
       };
 
       const result = await service.findOne(username);
@@ -38,6 +39,20 @@ describe('UsersService', () => {
       const result = await service.findOne(username);
 
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe('create', () => {
+    it('creates a new user', async () => {
+      const newUser = await service.create({
+        username: 'testuser',
+        password: 'testpass',
+      });
+      expect(newUser).toMatchObject({
+        username: 'testuser',
+        password: 'testpass',
+        id: 2,
+      });
     });
   });
 });

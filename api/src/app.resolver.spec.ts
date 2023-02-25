@@ -75,4 +75,19 @@ describe('AppResolver', () => {
       );
     });
   });
+
+  describe('signup', () => {
+    it('should signup user and return token', async () => {
+      jest
+        .spyOn(authService, 'signup')
+        .mockResolvedValue({ access_token: 'token' });
+
+      const result = await resolver.signup({
+        username: 'testuser',
+        password: 'testpass',
+      });
+
+      expect(result).toEqual({ token: 'token' });
+    });
+  });
 });

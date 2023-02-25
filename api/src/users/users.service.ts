@@ -18,7 +18,7 @@ export class UsersService {
     },
   ];
 
-  create(createUserInput: CreateUserInput) {
+  async create(createUserInput: CreateUserInput) {
     const newUser = new User();
     newUser.id = this.users.length;
     newUser.password = createUserInput.password;

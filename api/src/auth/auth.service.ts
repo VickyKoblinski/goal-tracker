@@ -28,18 +28,16 @@ export class AuthService {
   }
 
   async signup(createUserInput: CreateUserInput) {
-    if (createUserInput) {
-      const hashedPassword = await hashPassword(createUserInput.password);
-      const newUser = await this.usersService.create({
-        username: createUserInput.username,
-        password: hashedPassword,
-      });
-      const { password, ...payload } = newUser;
-
-      return {
-        access_token: this.jwtService.sign(payload),
-      };
-    }
-    return null;
+    const hashedPassword = await hashPassword(createUserInput.password);
+    const newUser = await this.usersService.create({
+      username: createUserInput.username,
+      password: hashedPassword,
+    });
+    return {
+      access_token: this.jwtService.sign({
+        username: newUser.username,
+        sub: newUser.id,
+      }),
+    };
   }
 }

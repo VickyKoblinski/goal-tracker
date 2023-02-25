@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
+import * as encrypt from './encrypt';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -37,6 +38,7 @@ describe('AuthService', () => {
       const findOneSpy = jest
         .spyOn(usersService, 'findOne')
         .mockResolvedValue(user);
+      jest.spyOn(encrypt, 'comparePassword').mockResolvedValue(true);
 
       const result = await authService.validateUser('testuser', 'testpass');
 
@@ -62,6 +64,27 @@ describe('AuthService', () => {
         userId: 1,
       });
 
+      expect(signSpy).toHaveBeenCalledWith({
+        username: 'testuser',
+        sub: 1,
+      });
+      expect(result).toEqual({ access_token: 'token' });
+    });
+  });
+
+  describe('signup', () => {
+    it('should return a jwt when a user signs up', async () => {
+      const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
+      jest.spyOn(encrypt, 'hashPassword').mockResolvedValue('hashed');
+      jest.spyOn(usersService, 'create').mockResolvedValue({
+        password: 'hashed',
+        username: 'testuser',
+        id: 1,
+      });
+      const result = await authService.signup({
+        username: 'testuser',
+        password: 'testpass',
+      });
       expect(signSpy).toHaveBeenCalledWith({
         username: 'testuser',
         sub: 1,
