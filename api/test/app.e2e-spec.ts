@@ -1,4 +1,3 @@
-import { LoginUserInput } from './../src/users/dto/login-user.input';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';

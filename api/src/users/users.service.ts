@@ -9,7 +9,7 @@ export class UsersService {
     {
       id: 1,
       username: 'john',
-      password: 'changeme',
+      password: '$2b$10$Dot1qjkYa5IXEs80gzTWQ.Xw.IFgcYat31FhCGIL1m3MueNO9Fxde',
     },
     {
       id: 2,
@@ -18,9 +18,15 @@ export class UsersService {
     },
   ];
 
-  // create(createUserInput: CreateUserInput) {
-  //   return 'This action adds a new user';
-  // }
+  create(createUserInput: CreateUserInput) {
+    const newUser = new User();
+    newUser.id = this.users.length;
+    newUser.password = createUserInput.password;
+    newUser.username = createUserInput.username;
+
+    this.users.push(newUser);
+    return newUser;
+  }
 
   // findAll() {
   //   return `This action returns all users`;
