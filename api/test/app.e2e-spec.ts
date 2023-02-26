@@ -1,7 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '@/app.module';
 import Handlers from './app.handlers';
+
+console.log(AppModule);
 
 describe('Goal resolvers (supertest)', () => {
   let app: INestApplication;
@@ -26,7 +28,6 @@ describe('Goal resolvers (supertest)', () => {
       const res = await unauthHandlers.register(loginUserInput);
 
       const { data } = res.body;
-
       expect(data.register.token).toBeDefined();
     });
 
@@ -61,10 +62,8 @@ describe('Goal resolvers (supertest)', () => {
   describe('whoAmI', () => {
     it('returns current user', async () => {
       const res = await authHandlers.whoAmI();
-      expect(res.body.data.whoAmI).toEqual({
-        id: '1',
-        username: 'john',
-      });
+      expect(res.body.data.whoAmI.username).toEqual('john');
+      expect(typeof res.body.data.whoAmI.id).toBe('string');
     });
 
     it('is unauthorized if bad token is sent', async () => {

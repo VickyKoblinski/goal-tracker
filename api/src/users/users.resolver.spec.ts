@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { EmailVerification } from './entities/email-verification.entity';
 import { User } from './entities/user.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
@@ -16,6 +17,18 @@ describe('UsersResolver', () => {
         {
           provide: getRepositoryToken(User),
           useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(EmailVerification),
+          useClass: Repository,
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            manager: {
+              transaction: jest.fn(),
+            },
+          },
         },
       ],
     }).compile();

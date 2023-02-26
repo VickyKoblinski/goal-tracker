@@ -15,6 +15,14 @@ input CreateGoalInput {
   parent: ID
 }
 
+input CreateUserInput {
+  """Password"""
+  password: String!
+
+  """Username"""
+  username: String!
+}
+
 input DeleteGoalInput {
   deletionStrategy: DeleteGoalStrategy
   id: ID!
@@ -49,7 +57,7 @@ type Mutation {
   createGoal(createGoalInput: CreateGoalInput!): Goal!
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
   login(loginUserInput: LoginUserInput!): Auth!
-  register(loginUserInput: LoginUserInput!): Auth!
+  register(createUserInput: CreateUserInput!): Auth!
 }
 
 type Query {

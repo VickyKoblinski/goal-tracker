@@ -1,10 +1,12 @@
+import { EmailVerification } from './../users/entities/email-verification.entity';
+import { MailerService } from '@nestjs-modules/mailer';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '@/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/entities/user.entity';
+import { User } from '@/users/entities/user.entity';
 import * as encrypt from './encrypt';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 describe('AuthService', () => {
@@ -27,6 +29,18 @@ describe('AuthService', () => {
           provide: getRepositoryToken(User),
           useClass: Repository,
         },
+        {
+          provide: getRepositoryToken(EmailVerification),
+          useClass: Repository,
+        },
+        {
+          provide: MailerService,
+          useValue: {},
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -42,7 +56,7 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should return user object if credentials are valid', async () => {
       const user = new User();
-      user.id = 1;
+      user.id = '1234-14123-13134';
       user.username = 'testuser';
       user.password = 'testpass';
       const findOneSpy = jest
@@ -85,11 +99,11 @@ describe('AuthService', () => {
   describe('register', () => {
     it('should return a jwt when a user signs up', async () => {
       const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
-      jest.spyOn(encrypt, 'hashPassword').mockResolvedValue('hashed');
       jest.spyOn(usersService, 'create').mockResolvedValue({
         password: 'hashed',
         username: 'testuser',
-        id: 1,
+        id: 'USER_ID',
+        emailVerification: new EmailVerification(),
       });
       const result = await authService.register({
         username: 'testuser',
@@ -97,7 +111,7 @@ describe('AuthService', () => {
       });
       expect(signSpy).toHaveBeenCalledWith({
         username: 'testuser',
-        sub: 1,
+        sub: 'USER_ID',
       });
       expect(result).toEqual({ access_token: 'token' });
     });

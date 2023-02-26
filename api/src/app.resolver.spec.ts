@@ -1,3 +1,5 @@
+import { MailerService } from '@nestjs-modules/mailer';
+import { EmailVerification } from './users/entities/email-verification.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppResolver } from './app.resolver';
@@ -6,7 +8,7 @@ import { AuthService } from './auth/auth.service';
 import { User } from './users/entities/user.entity';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 describe('AppResolver', () => {
@@ -25,6 +27,18 @@ describe('AppResolver', () => {
           provide: getRepositoryToken(User),
           useClass: Repository,
         },
+        {
+          provide: getRepositoryToken(EmailVerification),
+          useClass: Repository,
+        },
+        {
+          provide: MailerService,
+          useValue: {},
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {},
+        },
       ],
     }).compile();
 
@@ -40,9 +54,10 @@ describe('AppResolver', () => {
   describe('whoAmI', () => {
     it('should return a user', async () => {
       const mockUser: User = {
-        id: 1,
+        id: '1',
         username: 'testuser',
         password: 'testpassword',
+        emailVerification: new EmailVerification(),
       };
 
       jest

@@ -1,14 +1,16 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserInput } from 'src/users/dto/create-user.input';
-import { UsersService } from '../users/users.service';
-import { hashPassword, comparePassword } from './encrypt';
+import { CreateUserInput } from '@/users/dto/create-user.input';
+import { UsersService } from '@/users/users.service';
+import { comparePassword } from './encrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -28,16 +30,32 @@ export class AuthService {
   }
 
   async register(createUserInput: CreateUserInput) {
-    const hashedPassword = await hashPassword(createUserInput.password);
-    const newUser = await this.usersService.create({
-      username: createUserInput.username,
-      password: hashedPassword,
-    });
+    const newUser = await this.usersService.create(createUserInput);
+    // await this.sendVerification({
+    //   username: newUser.username,
+    //   verificationToken: newUser.emailVerification.emailVerificationToken,
+    // });
     return {
       access_token: this.jwtService.sign({
         username: newUser.username,
         sub: newUser.id,
       }),
     };
+  }
+
+  async sendVerification({
+    username,
+    verificationToken,
+  }: {
+    username: string;
+    verificationToken: string;
+  }) {
+    const info = await this.mailerService.sendMail({
+      to: 'test@nestjs.com', // list of receivers
+      from: 'noreply@nestjs.com', // sender address
+      subject: 'Testing Nest MailerModule ✔', // Subject line
+      text: 'welcome', // plaintext body
+      html: '<b>welcome</b>', // HTML body content
+    });
   }
 }

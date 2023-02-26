@@ -27,16 +27,16 @@ export default class Handlers {
     });
   }
 
-  register(loginUserInput) {
+  register(createUserInput) {
     return this.wrapper({
       query: `
-      mutation Register($loginUserInput: LoginUserInput!) {
-        register(loginUserInput: $loginUserInput) {
+      mutation Register($createUserInput: CreateUserInput!) {
+        register(createUserInput: $createUserInput) {
           token
         }
       }
       `,
-      variables: { loginUserInput },
+      variables: { createUserInput },
     });
   }
 

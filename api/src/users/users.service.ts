@@ -1,6 +1,7 @@
+import { EmailVerification } from './entities/email-verification.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
@@ -21,13 +22,28 @@ export class UsersService {
   // ];
 
   constructor(
+    private dataSource: DataSource,
+    @InjectRepository(EmailVerification)
+    private emailVerification: Repository<EmailVerification>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
-    const user = this.userRepository.create(createUserInput);
-    await this.userRepository.save(user);
+    const emailVerification = this.emailVerification.create();
+    const user = this.userRepository.create({
+      ...createUserInput,
+      emailVerification,
+    });
+    emailVerification.user = user;
+
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        await transactionalEntityManager.save(emailVerification);
+        await transactionalEntityManager.save(user);
+      },
+    );
+
     return user;
   }
 
