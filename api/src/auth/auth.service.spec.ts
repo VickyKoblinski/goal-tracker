@@ -1,5 +1,4 @@
 import { EmailVerification } from './../users/entities/email-verification.entity';
-import { MailerService } from '@nestjs-modules/mailer';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '@/users/users.service';
@@ -32,10 +31,6 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(EmailVerification),
           useClass: Repository,
-        },
-        {
-          provide: MailerService,
-          useValue: {},
         },
         {
           provide: getDataSourceToken(),

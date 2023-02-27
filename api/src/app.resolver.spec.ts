@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { EmailVerification } from './users/entities/email-verification.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -30,10 +29,6 @@ describe('AppResolver', () => {
         {
           provide: getRepositoryToken(EmailVerification),
           useClass: Repository,
-        },
-        {
-          provide: MailerService,
-          useValue: {},
         },
         {
           provide: getDataSourceToken(),

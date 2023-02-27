@@ -1,4 +1,3 @@
-import { MailerModule } from '@nestjs-modules/mailer';
 import { LocalStrategy } from './local.strategy';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -16,7 +15,6 @@ import { JwtStrategy } from './jwt.strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '600000s' },
     }),
-    MailerModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

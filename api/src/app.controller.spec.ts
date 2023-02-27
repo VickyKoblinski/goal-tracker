@@ -1,4 +1,5 @@
-import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { SendGridService } from './sendgrid/sendgrid.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -12,9 +13,10 @@ describe('AppController', () => {
       providers: [
         AppService,
         {
-          provide: MailerService,
-          useValue: { sendMail: jest.fn() },
+          provide: SendGridService,
+          useValue: {},
         },
+        ConfigService,
       ],
     }).compile();
 
