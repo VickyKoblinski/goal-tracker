@@ -3,9 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import Handlers from './app.handlers';
 
-console.log(AppModule);
-
-describe('Goal resolvers (supertest)', () => {
+describe('App resolvers (supertest)', () => {
   let app: INestApplication;
   let unauthHandlers: Handlers;
   let authHandlers: Handlers;

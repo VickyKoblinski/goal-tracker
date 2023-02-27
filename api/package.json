@@ -17,7 +17,9 @@
     "test:watch": "cross-env NODE_ENV=test jest --watch --no-cache",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:debug": "cross-env NODE_ENV=test node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json"
+    "pretest:e2e": "docker-compose up -d",
+    "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
+    "posttest:e2e": "docker-compose down"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.2.0",
@@ -30,6 +32,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/typeorm": "^9.0.1",
+    "@sendgrid/client": "^7.7.0",
     "@sendgrid/mail": "^7.7.0",
     "apollo-server-core": "^3.11.1",
     "apollo-server-express": "^3.11.1",
