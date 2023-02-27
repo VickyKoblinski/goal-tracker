@@ -1,3 +1,4 @@
+import { SendGridService } from './../sendgrid/sendgrid.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from '@/users/dto/create-user.input';
@@ -7,6 +8,7 @@ import { comparePassword } from './encrypt';
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly sendGridService: SendGridService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -29,25 +31,16 @@ export class AuthService {
 
   async register(createUserInput: CreateUserInput) {
     const newUser = await this.usersService.create(createUserInput);
-    // await this.sendVerification({
-    //   username: newUser.username,
-    //   verificationToken: newUser.emailVerification.emailVerificationToken,
-    // });
+    await this.sendGridService.sendEmailVerification({
+      to: 'temp@gmail.com',
+      name: newUser.username,
+      verificationToken: newUser.emailVerification.emailVerificationToken,
+    });
     return {
       access_token: this.jwtService.sign({
         username: newUser.username,
         sub: newUser.id,
       }),
     };
-  }
-
-  async sendVerification({
-    username,
-    verificationToken,
-  }: {
-    username: string;
-    verificationToken: string;
-  }) {
-    // TODO: send mail
   }
 }

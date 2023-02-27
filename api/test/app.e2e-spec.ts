@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import Handlers from './app.handlers';
+import sendgridHandler from './sendgrid.handler';
 
 describe('App resolvers (supertest)', () => {
   let app: INestApplication;
@@ -22,11 +23,20 @@ describe('App resolvers (supertest)', () => {
   });
 
   describe('register', () => {
+    beforeEach(async () => {
+      await sendgridHandler.delete();
+    });
+
     it('creates a new user', async () => {
       const res = await unauthHandlers.register(loginUserInput);
 
       const { data } = res.body;
       expect(data.register.token).toBeDefined();
+      const emailRes = await sendgridHandler.get();
+      const sentTo = emailRes.body[0].personalizations[0];
+      expect(sentTo.to[0].email).toBe(loginUserInput.username);
+      expect(sentTo.dynamic_template_data.verificationToken).toBeDefined();
+      expect(sentTo.template_id).toBeDefined();
     });
 
     it.skip('cannot create a new user with a shared username', () => {

@@ -7,6 +7,7 @@ import * as sgClient from '@sendgrid/client';
 export class SendGridService {
   constructor(private readonly configService: ConfigService) {
     if (process.env.NODE_ENV !== 'prod') {
+      SendGrid.setApiKey(this.configService.get<string>('MOCK_SEND_GRID_KEY'));
       sgClient.setDefaultRequest('baseUrl', 'http://localhost:7007');
       SendGrid.setClient(sgClient);
     } else {
@@ -22,11 +23,11 @@ export class SendGridService {
   sendEmailVerification({
     to,
     name,
-    verificationCode,
+    verificationToken,
   }: {
     to: string;
     name: string;
-    verificationCode: string;
+    verificationToken: string;
   }) {
     return this.send({
       from: this.configService.get<string>('SEND_GRID_FROM_NOREPLY'),
@@ -36,7 +37,7 @@ export class SendGridService {
       ),
       dynamicTemplateData: {
         name,
-        verificationCode,
+        verificationToken,
       },
     });
   }

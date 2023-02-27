@@ -1,8 +1,12 @@
-import * as request from 'supertest';
+import sendgridHandler from './sendgrid.handler';
 
-describe('Goal resolvers (supertest)', () => {
+describe('Sendgrid mock container', () => {
+  beforeEach(async () => {
+    await sendgridHandler.delete();
+  });
+
   it('connects to sendgrid-mock docker container', async () => {
-    const res = await request('http://localhost:7007').get('/api/mails');
+    const res = await sendgridHandler.get();
     expect(res.body.length).toBe(0);
   });
 });

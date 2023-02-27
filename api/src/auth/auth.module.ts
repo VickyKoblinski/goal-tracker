@@ -1,3 +1,4 @@
+import { SendGridService } from './../sendgrid/sendgrid.service';
 import { LocalStrategy } from './local.strategy';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -16,7 +17,7 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: '600000s' },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, SendGridService, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

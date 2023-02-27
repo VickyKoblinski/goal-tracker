@@ -15,7 +15,7 @@ export class AppController {
     return this.sendGridService.sendEmailVerification({
       to: 'test@gmail.com',
       name: 'tester',
-      verificationCode: '1234',
+      verificationToken: '1234',
     });
   }
 }
