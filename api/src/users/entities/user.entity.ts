@@ -9,6 +9,7 @@ import {
   ValueTransformer,
 } from 'typeorm';
 import { hashPassword } from '@/auth/encrypt';
+import { IsEmail } from 'class-validator';
 
 const toBcryptHash: ValueTransformer = {
   from: (databasePassword: string) => databasePassword,
@@ -23,9 +24,14 @@ export class User {
   @Field(() => ID, { description: 'User ID' })
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   @Field(() => ID, { description: 'Username' })
   username: string;
+
+  @Column({ unique: true })
+  @IsEmail()
+  @Field(() => String, { description: "User's email address" })
+  email: string;
 
   @Column({
     transformer: toBcryptHash,

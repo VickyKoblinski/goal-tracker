@@ -8,9 +8,10 @@ describe('App resolvers (supertest)', () => {
   let app: INestApplication;
   let unauthHandlers: Handlers;
   let authHandlers: Handlers;
-  const loginUserInput = {
+  const createUserInput = {
     username: 'john',
     password: 'changeme',
+    email: 'john-changeme@gmail.com',
   };
 
   beforeAll(async () => {
@@ -28,15 +29,16 @@ describe('App resolvers (supertest)', () => {
     });
 
     it('creates a new user', async () => {
-      const res = await unauthHandlers.register(loginUserInput);
+      const res = await unauthHandlers.register(createUserInput);
 
       const { data } = res.body;
       expect(data.register.token).toBeDefined();
       const emailRes = await sendgridHandler.get();
-      const sentTo = emailRes.body[0].personalizations[0];
-      expect(sentTo.to[0].email).toBe(loginUserInput.username);
+      const body = emailRes.body[0];
+      const sentTo = body.personalizations[0];
+      expect(sentTo.to[0].email).toBe(createUserInput.email);
       expect(sentTo.dynamic_template_data.verificationToken).toBeDefined();
-      expect(sentTo.template_id).toBeDefined();
+      expect(body.template_id).toBeDefined();
     });
 
     it.skip('cannot create a new user with a shared username', () => {
@@ -46,6 +48,7 @@ describe('App resolvers (supertest)', () => {
 
   describe('login', () => {
     it('get jwt from valid login', async () => {
+      const { email, ...loginUserInput } = createUserInput;
       const res = await unauthHandlers.login(loginUserInput);
 
       const { data } = res.body;

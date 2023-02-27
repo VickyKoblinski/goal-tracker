@@ -16,6 +16,9 @@ input CreateGoalInput {
 }
 
 input CreateUserInput {
+  """Email address"""
+  email: String!
+
   """Password"""
   password: String!
 
@@ -68,6 +71,9 @@ type Query {
 }
 
 type User {
+  """User's email address"""
+  email: String!
+
   """User ID"""
   id: ID!
 

@@ -32,7 +32,7 @@ export class AuthService {
   async register(createUserInput: CreateUserInput) {
     const newUser = await this.usersService.create(createUserInput);
     await this.sendGridService.sendEmailVerification({
-      to: 'temp@gmail.com',
+      to: newUser.email,
       name: newUser.username,
       verificationToken: newUser.emailVerification.emailVerificationToken,
     });
