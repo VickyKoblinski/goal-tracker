@@ -1,4 +1,5 @@
 {
   "jest.jestCommandLine": "pnpm run test",
-  "jest.rootPath": "api"
+  "jest.rootPath": "api",
+  "cSpell.words": ["signup"]
 }
