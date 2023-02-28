@@ -1,8 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-import { SendGridService } from './sendgrid/sendgrid.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
 
 describe('AppController', () => {
   let appController: AppController;
@@ -10,15 +10,17 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [
-        AppService,
-        {
-          provide: SendGridService,
-          useValue: {},
-        },
-        ConfigService,
-      ],
-    }).compile();
+    })
+      .useMocker((token) => {
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     appController = app.get<AppController>(AppController);
   });

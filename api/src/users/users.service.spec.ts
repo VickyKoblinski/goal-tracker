@@ -53,6 +53,7 @@ describe('UsersService', () => {
         username: 'john',
         password:
           '$2b$10$Dot1qjkYa5IXEs80gzTWQ.Xw.IFgcYat31FhCGIL1m3MueNO9Fxde',
+        email: 'john@g.com',
         emailVerification: new EmailVerification(),
       };
 
@@ -77,6 +78,7 @@ describe('UsersService', () => {
       const user = new User();
       user.username = 'testuser';
       user.password = 'testpass';
+      user.email = 'testemail@email.com';
       user.id = '1';
 
       jest.spyOn(usersRepository, 'create').mockReturnValue(user);
@@ -87,10 +89,12 @@ describe('UsersService', () => {
       const newUser = await service.create({
         username: 'testuser',
         password: 'testpass',
+        email: 'testemail@email.com',
       });
       expect(newUser).toMatchObject({
         username: 'testuser',
         password: 'testpass',
+        email: 'testemail@email.com',
         id: '1',
       });
     });

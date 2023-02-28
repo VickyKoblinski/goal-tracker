@@ -7,6 +7,7 @@ import { User } from '@/users/entities/user.entity';
 import * as encrypt from './encrypt';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SendGridService } from '@/sendgrid/sendgrid.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -35,6 +36,12 @@ describe('AuthService', () => {
         {
           provide: getDataSourceToken(),
           useValue: {},
+        },
+        {
+          provide: SendGridService,
+          useValue: {
+            sendEmailVerification: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -96,6 +103,7 @@ describe('AuthService', () => {
       const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
       jest.spyOn(usersService, 'create').mockResolvedValue({
         password: 'hashed',
+        email: 'myemail@email.com',
         username: 'testuser',
         id: 'USER_ID',
         emailVerification: new EmailVerification(),
@@ -103,6 +111,7 @@ describe('AuthService', () => {
       const result = await authService.register({
         username: 'testuser',
         password: 'testpass',
+        email: 'myemail@email.com',
       });
       expect(signSpy).toHaveBeenCalledWith({
         username: 'testuser',

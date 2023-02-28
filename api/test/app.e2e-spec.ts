@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import Handlers from './app.handlers';
 import sendgridHandler from './sendgrid.handler';
+import * as request from 'supertest';
 
 describe('App resolvers (supertest)', () => {
   let app: INestApplication;
@@ -71,7 +72,23 @@ describe('App resolvers (supertest)', () => {
   });
 
   describe('whoAmI', () => {
+    it('returns error for not validated email', async () => {
+      const res = await authHandlers.whoAmI();
+      expect(res.body.errors[0].message).toEqual(
+        'Email address has not been validated',
+      );
+    });
+
     it('returns current user', async () => {
+      const emailRes = await sendgridHandler.get();
+      const token =
+        emailRes.body[0].personalizations[0].dynamic_template_data
+          .verificationToken;
+      await request(app.getHttpServer())
+        .get('/verify')
+        .query({ token })
+        .expect(200);
+
       const res = await authHandlers.whoAmI();
       expect(res.body.data.whoAmI.username).toEqual('john');
       expect(typeof res.body.data.whoAmI.id).toBe('string');
