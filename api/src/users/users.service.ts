@@ -1,5 +1,9 @@
 import { EmailVerification } from './entities/email-verification.entity';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  MethodNotAllowedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
@@ -53,6 +57,28 @@ export class UsersService {
 
   findOne(username: string) {
     return this.userRepository.findOne({ where: { username } });
+  }
+
+  findByVerificationToken(emailVerificationToken: string) {
+    return this.emailVerification.findOne({
+      where: { emailVerificationToken },
+    });
+  }
+
+  async setEmailVerified(emailVerificationToken: string) {
+    const emailVerification = await this.findByVerificationToken(
+      emailVerificationToken,
+    );
+
+    if (!emailVerification) throw new NotFoundException('token not found');
+
+    // Check expiration, throw error if expired
+    if (emailVerification.expires < new Date())
+      throw new MethodNotAllowedException('token expired');
+
+    emailVerification.emailVerified = true;
+    await this.emailVerification.save(emailVerification);
+    return emailVerification;
   }
 
   // update(id: number, updateUserInput: UpdateUserInput) {

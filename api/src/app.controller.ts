@@ -1,21 +1,19 @@
-import { SendGridService } from './sendgrid/sendgrid.service';
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
+import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly sendGridService: SendGridService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get()
   getHello(): string {
     return 'Hello World!';
   }
 
-  @Get('/mail')
-  mail() {
-    return this.sendGridService.sendEmailVerification({
-      to: 'test@gmail.com',
-      name: 'tester',
-      verificationToken: '1234',
-    });
+  @Get('/verify')
+  async verifyEmail(@Query('token') emailVerificationToken) {
+    if (!emailVerificationToken) return null;
+    await this.authService.validateEmail(emailVerificationToken);
+    return 'Verified!';
   }
 }

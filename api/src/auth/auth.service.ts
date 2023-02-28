@@ -22,6 +22,15 @@ export class AuthService {
     return null;
   }
 
+  async hasValidatedEmail(username: string) {
+    const user = await this.usersService.findOne(username);
+    return user.emailVerification.emailVerified;
+  }
+
+  async validateEmail(verificationToken: string) {
+    return this.usersService.setEmailVerified(verificationToken);
+  }
+
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
     return {
