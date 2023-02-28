@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { gql } from "@apollo/client";
 import { CreateUserInput, useSignupMutation } from "./generated/graphql";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import { Box, Input, TextField, Button } from "@mui/material";
 
 export default function Signin() {
   const [signupMutation, signupMutationResult] = useSignupMutation();
@@ -12,7 +13,15 @@ export default function Signin() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateUserInput>();
+    control,
+  } = useForm<CreateUserInput>({
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
+
   const onSubmit = (data: CreateUserInput) => {
     signupMutation({
       variables: {
@@ -31,25 +40,64 @@ export default function Signin() {
   }, [signupMutationResult, router]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input
-        type="text"
-        placeholder="Username"
-        {...register("username", { required: true, maxLength: 80 })}
-      />
-      <input
-        type="text"
-        placeholder="Email"
-        {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        {...register("password", { required: true, maxLength: 100 })}
-      />
+    <Box
+      component="form"
+      sx={{
+        "& .MuiTextField-root": { m: 1, width: "25ch" },
+      }}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div>
+        <Controller
+          name="username"
+          control={control}
+          render={({ field, fieldState, formState }) => (
+            <TextField
+              label="Username"
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
 
-      <input type="submit" />
-    </form>
+        <Controller
+          name="password"
+          control={control}
+          render={({ field, fieldState, formState }) => (
+            <TextField
+              label="Password"
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
+
+        <Controller
+          name="email"
+          control={control}
+          rules={{
+            required: "Required",
+            pattern: { value: /^\S+@\S+$/i, message: "input must match @" },
+          }}
+          render={({ field, fieldState, formState }) => (
+            <TextField
+              label="Email"
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+            />
+          )}
+        />
+
+        <Button variant="contained" type="submit">
+          Submit
+        </Button>
+      </div>
+    </Box>
   );
 }
 

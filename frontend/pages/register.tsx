@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Link from "../src/Link";
-import ProTip from "../src/Register";
+import Register from "../src/Register";
 import Copyright from "../src/Copyright";
 
 export default function Home() {
@@ -24,7 +24,7 @@ export default function Home() {
         <Link href="/about" color="secondary">
           Go to the about page
         </Link>
-        <ProTip />
+        <Register />
         <Copyright />
       </Box>
     </Container>
