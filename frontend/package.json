@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3002",
+    "start:dev": "next dev -p 3002",
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "next lint",
@@ -38,6 +38,7 @@
     "@graphql-codegen/typescript-operations": "2.3.2",
     "@graphql-codegen/typescript-react-apollo": "3.2.8",
     "@types/node": "18.14.2",
+    "cypress": "^12.7.0",
     "graphql-codegen-typescript-common": "0.18.2"
   }
 }
