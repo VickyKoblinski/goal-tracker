@@ -17,9 +17,7 @@ describe("register a new user", () => {
     submit.click();
 
     cy.findByText("Verify your email");
-  });
 
-  it("Verifies email", () => {
     cy.request("http://localhost:7007/api/mails").then((response) => {
       const email = response.body.find(
         (email: any) =>
