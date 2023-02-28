@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt';
 
 // Hashes the given password and returns the resulting hash
-export async function hashPassword(password) {
+export function hashPassword(password) {
   const saltRounds = 10;
 
   // Generate a random salt with 10 rounds of hashing
-  const salt = await bcrypt.genSalt(saltRounds);
+  const salt = bcrypt.genSaltSync(saltRounds);
 
   // Hash the password using the salt
-  const hash = await bcrypt.hash(password, salt);
+  const hash = bcrypt.hashSync(password, salt);
 
   // Return the resulting hash
   return hash;
@@ -21,4 +21,10 @@ export async function comparePassword(password, hash) {
 
   // Return the result of the comparison as a boolean value
   return isMatch;
+}
+
+// Generate a unique token
+export async function generateVerificationToken(): Promise<string> {
+  const token = await bcrypt.hash(Date.now().toString(), 10);
+  return token;
 }

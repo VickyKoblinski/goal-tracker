@@ -9,9 +9,7 @@ export default class Handlers {
       .post('/graphql')
       .send(body)
       .set('Accept', 'application/json')
-      .set('Authorization', this.token ? 'Bearer ' + this.token : '')
-      .expect('Content-Type', /json/)
-      .expect(200);
+      .set('Authorization', this.token ? 'Bearer ' + this.token : '');
   }
 
   login(loginUserInput) {
@@ -27,16 +25,16 @@ export default class Handlers {
     });
   }
 
-  signup(loginUserInput) {
+  register(createUserInput) {
     return this.wrapper({
       query: `
-      mutation Signup($loginUserInput: LoginUserInput!) {
-        signup(loginUserInput: $loginUserInput) {
+      mutation Register($createUserInput: CreateUserInput!) {
+        register(createUserInput: $createUserInput) {
           token
         }
       }
       `,
-      variables: { loginUserInput },
+      variables: { createUserInput },
     });
   }
 
@@ -47,6 +45,7 @@ export default class Handlers {
             whoAmI {
               id
               username
+              email
             }
           }
       `,

@@ -1,4 +1,4 @@
-import { JwtService } from '@nestjs/jwt';
+import { EmailVerification } from './users/entities/email-verification.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppResolver } from './app.resolver';
 import { UsersService } from './users/users.service';
@@ -6,8 +6,9 @@ import { AuthService } from './auth/auth.service';
 import { User } from './users/entities/user.entity';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
 
 describe('AppResolver', () => {
   let resolver: AppResolver;
@@ -16,17 +17,18 @@ describe('AppResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AppResolver,
-        UsersService,
-        AuthService,
-        JwtService,
-        {
-          provide: getRepositoryToken(User),
-          useClass: Repository,
-        },
-      ],
-    }).compile();
+      providers: [AppResolver],
+    })
+      .useMocker((token) => {
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     resolver = module.get<AppResolver>(AppResolver);
     usersService = module.get<UsersService>(UsersService);
@@ -40,9 +42,11 @@ describe('AppResolver', () => {
   describe('whoAmI', () => {
     it('should return a user', async () => {
       const mockUser: User = {
-        id: 1,
+        id: '1',
         username: 'testuser',
         password: 'testpassword',
+        email: 'email@email.com',
+        emailVerification: new EmailVerification(),
       };
 
       jest
@@ -91,15 +95,16 @@ describe('AppResolver', () => {
     });
   });
 
-  describe('signup', () => {
-    it('should signup user and return token', async () => {
+  describe('register', () => {
+    it('should register user and return token', async () => {
       jest
-        .spyOn(authService, 'signup')
+        .spyOn(authService, 'register')
         .mockResolvedValue({ access_token: 'token' });
 
-      const result = await resolver.signup({
+      const result = await resolver.register({
         username: 'testuser',
         password: 'testpass',
+        email: 'test@test.com',
       });
 
       expect(result).toEqual({ token: 'token' });

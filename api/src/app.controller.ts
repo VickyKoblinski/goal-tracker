@@ -1,12 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Query } from '@nestjs/common';
+import { AuthService } from './auth/auth.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return 'Hello World!';
+  }
+
+  @Get('/verify')
+  async verifyEmail(@Query('token') emailVerificationToken) {
+    if (!emailVerificationToken) return null;
+    await this.authService.validateEmail(emailVerificationToken);
+    return 'Verified!';
   }
 }
