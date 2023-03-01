@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    appDir: true,
+module.exports = {
+  swcMinify: false,
+  trailingSlash: true,
+  env: {
+    // HOST
+    HOST_API_KEY: 'https://tbd.vercel.app',
   },
-}
-
-module.exports = nextConfig
+};
