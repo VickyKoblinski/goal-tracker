@@ -37,4 +37,18 @@ describe("register a new user", () => {
       cy.findByText(`Hello ${cypressUser}`);
     });
   });
+
+  it("Logs in user", () => {
+    cy.visit("/login");
+    const username = cy.findByLabelText(/username/i);
+    username.type(cypressUser);
+
+    const password = cy.findByLabelText(/password/i);
+    password.type(`cypress-user`);
+
+    const submit = cy.findByRole("button", { name: /submit/i });
+    submit.click();
+
+    cy.findByText(`Hello ${cypressUser}`);
+  });
 });

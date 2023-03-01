@@ -1,52 +1,59 @@
 import { useEffect } from "react";
 import { gql } from "@apollo/client";
-import { CreateUserInput, useSignupMutation } from "./generated/graphql";
+import { LoginUserInput, useLoginMutation } from "./generated/graphql";
 import { Controller, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { Box, Input, TextField, Button } from "@mui/material";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-let registerSchema = yup.object({
+let userSchema = yup.object({
   username: yup.string().required(),
   password: yup.string().required(),
-  email: yup.string().email().required(),
 });
 
-export default function Signin() {
-  const [signupMutation, signupMutationResult] = useSignupMutation();
+export default function Login() {
+  const [signupMutation, { loading }] = useLoginMutation({
+    onCompleted: (data) => {
+      console.log(data);
+      if (data) {
+        localStorage.setItem("token", data.login.token);
+        router.push("/dashboard");
+      }
+    },
+    onError: (error) => {
+      if (error.graphQLErrors) {
+        error.graphQLErrors.forEach((gqlE) => {
+          if (gqlE.extensions.code === "BAD_USER_INPUT") {
+            const invalidArgs = gqlE.extensions.invalidArgs as (
+              | "username"
+              | "password"
+            )[];
+            invalidArgs.forEach((arg) => {
+              setError(arg, { type: "required", message: "missing" });
+            });
+          }
+        });
+      }
+    },
+  });
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    control,
-  } = useForm<CreateUserInput>({
+  const { handleSubmit, control, setError } = useForm<LoginUserInput>({
     defaultValues: {
       username: "",
-      email: "",
       password: "",
     },
-    resolver: yupResolver(registerSchema),
+    resolver: yupResolver(userSchema),
   });
 
-  const onSubmit = (data: CreateUserInput) => {
+  const onSubmit = (data: LoginUserInput) => {
     signupMutation({
       variables: {
-        createUserInput: data,
+        loginUserInput: data,
       },
     });
   };
-
-  useEffect(() => {
-    if (signupMutationResult.data) {
-      const { token } = signupMutationResult.data.register;
-
-      localStorage.setItem("token", token);
-      router.push("/verify");
-    }
-  }, [signupMutationResult, router]);
 
   return (
     <Box
@@ -64,6 +71,7 @@ export default function Signin() {
           control={control}
           render={({ field, fieldState, formState }) => (
             <TextField
+              disabled={loading}
               label="Username"
               {...field}
               error={!!fieldState.error}
@@ -77,6 +85,7 @@ export default function Signin() {
           control={control}
           render={({ field, fieldState, formState }) => (
             <TextField
+              disabled={loading}
               label="Password"
               {...field}
               error={!!fieldState.error}
@@ -85,20 +94,7 @@ export default function Signin() {
           )}
         />
 
-        <Controller
-          name="email"
-          control={control}
-          render={({ field, fieldState, formState }) => (
-            <TextField
-              label="Email"
-              {...field}
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-            />
-          )}
-        />
-
-        <Button variant="contained" type="submit">
+        <Button disabled={loading} variant="contained" type="submit">
           Submit
         </Button>
       </div>
@@ -107,8 +103,8 @@ export default function Signin() {
 }
 
 gql`
-  mutation Signup($createUserInput: CreateUserInput!) {
-    register(createUserInput: $createUserInput) {
+  mutation Login($loginUserInput: LoginUserInput!) {
+    login(loginUserInput: $loginUserInput) {
       token
     }
   }
