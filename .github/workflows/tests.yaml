@@ -26,7 +26,7 @@ jobs:
           version: 7.26.3
       - uses: actions/checkout@v2
       - name: Install modules
-        run: pnpm install --dev
+        run: pnpm install
       - name: Run tests
         run: pnpm run test:e2e
 
@@ -38,8 +38,8 @@ jobs:
           version: 7.26.3
       - uses: actions/checkout@v2
       - name: Start docker compose
-        run: docker compose up
+        run: docker compose up -d
       - name: Install modules
-        run: cd frontend && pnpm install
+        run: cd frontend && pnpm install --dev
       - name: Run tests
         run: npx cypress run
