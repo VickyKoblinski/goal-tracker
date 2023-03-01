@@ -8,7 +8,10 @@ export class SendGridService {
   constructor(private readonly configService: ConfigService) {
     if (process.env.NODE_ENV !== 'prod') {
       SendGrid.setApiKey(this.configService.get<string>('MOCK_SEND_GRID_KEY'));
-      sgClient.setDefaultRequest('baseUrl', 'http://localhost:7007');
+      sgClient.setDefaultRequest(
+        'baseUrl',
+        this.configService.get<string>('MOCK_SEND_GRID_URL'),
+      );
       SendGrid.setClient(sgClient);
     } else {
       SendGrid.setApiKey(this.configService.get<string>('SEND_GRID_KEY'));
