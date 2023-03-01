@@ -1,8 +1,9 @@
+import { EmailVerification } from './users/entities/email-verification.entity';
 import { CreateUserInput } from './users/dto/create-user.input';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from './users/users.service';
 import { User } from './users/entities/user.entity';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/CurrentUser.decorator';
 import { GqlAuthGuard, LocalGqlAuthGuard } from './auth/gql-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -33,5 +34,17 @@ export class AppResolver {
   async register(@Args('createUserInput') createUserInput: CreateUserInput) {
     const login = await this.authService.register(createUserInput);
     return { token: login.access_token };
+  }
+
+  @Mutation(() => EmailVerification)
+  async verifyEmail(
+    @Args('emailVerificationToken') emailVerificationToken: string,
+  ) {
+    if (!emailVerificationToken)
+      throw new BadRequestException('Email verification code cannot be empty');
+    const emailVerification = await this.authService.validateEmail(
+      emailVerificationToken,
+    );
+    return emailVerification;
   }
 }

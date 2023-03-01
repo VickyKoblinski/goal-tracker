@@ -36,6 +36,11 @@ enum DeleteGoalStrategy {
   RECURSIVE
 }
 
+type EmailVerification {
+  """User ID"""
+  id: ID!
+}
+
 type Goal {
   """Subtasks"""
   children: [Goal!]
@@ -61,6 +66,7 @@ type Mutation {
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
   login(loginUserInput: LoginUserInput!): Auth!
   register(createUserInput: CreateUserInput!): Auth!
+  verifyEmail(emailVerificationToken: String!): EmailVerification!
 }
 
 type Query {

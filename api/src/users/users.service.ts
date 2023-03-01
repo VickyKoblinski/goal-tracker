@@ -1,8 +1,8 @@
 import { EmailVerification } from './entities/email-verification.entity';
 import {
   Injectable,
-  NotFoundException,
   MethodNotAllowedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
@@ -70,7 +70,7 @@ export class UsersService {
       emailVerificationToken,
     );
 
-    if (!emailVerification) throw new NotFoundException('token not found');
+    if (!emailVerification) throw new BadRequestException('token not found');
 
     // Check expiration, throw error if expired
     if (emailVerification.expires < new Date())
