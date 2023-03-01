@@ -40,6 +40,6 @@ jobs:
       - name: Start docker compose
         run: docker compose up -d
       - name: Install modules
-        run: cd frontend && pnpm install --dev
+        run: cd frontend && pnpm install --dev && pnpm install typescript@4.9.5
       - name: Run tests
         run: cd frontend && npx cypress run
