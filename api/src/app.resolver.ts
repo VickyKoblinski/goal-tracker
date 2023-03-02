@@ -5,7 +5,10 @@ import { UsersService } from './users/users.service';
 import { User } from './users/entities/user.entity';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/CurrentUser.decorator';
-import { GqlAuthGuard, LocalGqlAuthGuard } from './auth/gql-auth.guard';
+import {
+  GqlAuthGuardNoValidation,
+  LocalGqlAuthGuard,
+} from './auth/gql-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
@@ -18,7 +21,7 @@ export class AppResolver {
   ) {}
 
   @Query((returns) => User)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlAuthGuardNoValidation)
   whoAmI(@CurrentUser() user: User) {
     return this.usersService.findOne(user.username);
   }
@@ -37,6 +40,7 @@ export class AppResolver {
   }
 
   @Mutation(() => EmailVerification)
+  @UseGuards(GqlAuthGuardNoValidation)
   async verifyEmail(
     @Args('emailVerificationToken') emailVerificationToken: string,
   ) {
