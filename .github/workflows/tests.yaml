@@ -37,9 +37,9 @@ jobs:
         with:
           version: 7.26.3
       - uses: actions/checkout@v2
+      - name: Install frontend modules
+        run: cd frontend && pnpm install
       - name: Start docker compose
         run: docker compose up -d
-      - name: Install modules
-        run: cd frontend && pnpm install --dev && pnpm install typescript@4.9.5
       - name: Run tests
         run: cd frontend && npx cypress run

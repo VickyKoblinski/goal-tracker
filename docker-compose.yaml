@@ -12,6 +12,10 @@ services:
     build:
       context: ./frontend
       dockerfile: dockerfile.frontend
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./frontend:/app
     environment:
       NODE_ENV: cypress
     depends_on:
