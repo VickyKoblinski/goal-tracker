@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from '@/users/dto/create-user.input';
 import { UsersService } from '@/users/users.service';
 import { comparePassword } from './encrypt';
+import { User } from '@/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -13,8 +14,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOneByEmail(email);
     if (user && (await comparePassword(pass, user.password))) {
       const { password, ...result } = user;
       return result;
@@ -27,14 +28,17 @@ export class AuthService {
     return user.emailVerification.emailVerified;
   }
 
-  async validateEmail(verificationToken: string) {
-    return this.usersService.setEmailVerified(verificationToken);
+  async validateEmail(user: User, verificationToken: string) {
+    return this.usersService.setEmailVerified(user, verificationToken);
   }
 
   async login(user: any) {
     const payload = { username: user.username, sub: user.userId };
+    const dbUser = await this.usersService.findOneByEmail(user.username);
+
     return {
       access_token: this.jwtService.sign(payload),
+      user: dbUser,
     };
   }
 
@@ -46,10 +50,11 @@ export class AuthService {
       verificationToken: newUser.emailVerification.emailVerificationToken,
     });
     return {
-      access_token: this.jwtService.sign({
+      accessToken: this.jwtService.sign({
         username: newUser.username,
         sub: newUser.id,
       }),
+      user: newUser,
     };
   }
 }

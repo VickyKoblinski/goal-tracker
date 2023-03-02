@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import LoadingScreen from '../components/loading-screen';
 //
 import Login from '../pages/login';
+import Verify from '../pages/verify';
 import { useAuthContext } from './useAuthContext';
 
 // ----------------------------------------------------------------------
@@ -14,7 +15,7 @@ type AuthGuardProps = {
 };
 
 export default function AuthGuard({ children }: AuthGuardProps) {
-  const { isAuthenticated, isInitialized } = useAuthContext();
+  const { isAuthenticated, isInitialized, hasVerifiedEmail } = useAuthContext();
 
   const { pathname, push } = useRouter();
 
@@ -38,6 +39,13 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       setRequestedLocation(pathname);
     }
     return <Login />;
+  }
+
+  if (!hasVerifiedEmail) {
+    if (pathname !== requestedLocation) {
+      setRequestedLocation(pathname);
+    }
+    return <Verify />;
   }
 
   return <> {children} </>;

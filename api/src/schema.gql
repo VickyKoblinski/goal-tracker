@@ -5,6 +5,9 @@
 type Auth {
   """JWT Access Token"""
   token: String!
+
+  """This user"""
+  user: User!
 }
 
 input CreateGoalInput {
@@ -16,7 +19,7 @@ input CreateGoalInput {
 }
 
 input CreateUserInput {
-  """Email address"""
+  """Email"""
   email: String!
 
   """Password"""
@@ -37,6 +40,9 @@ enum DeleteGoalStrategy {
 }
 
 type EmailVerification {
+  """Has email been verified?"""
+  emailVerified: Boolean!
+
   """User ID"""
   id: ID!
 }
@@ -54,11 +60,11 @@ type Goal {
 }
 
 input LoginUserInput {
+  """Email"""
+  email: String!
+
   """Password"""
   password: String!
-
-  """Username"""
-  username: String!
 }
 
 type Mutation {
@@ -79,6 +85,9 @@ type Query {
 type User {
   """User's email address"""
   email: String!
+
+  """Email verification status"""
+  emailVerification: EmailVerification!
 
   """User ID"""
   id: ID!

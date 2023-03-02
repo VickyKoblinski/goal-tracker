@@ -7,6 +7,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import type {} from 'rxjs'; // Required for PNPM bug with TS
 
 @Injectable()
 export class GqlAuthGuardNoValidation extends AuthGuard('jwt') {
@@ -44,7 +45,8 @@ export class LocalGqlAuthGuard extends AuthGuard('local') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
-    req.body = req.body.variables.loginUserInput;
+    const { email, password } = req.body.variables.loginUserInput;
+    req.body = { username: email, password };
     return req;
   }
 }

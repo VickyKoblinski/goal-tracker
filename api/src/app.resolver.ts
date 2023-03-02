@@ -23,30 +23,32 @@ export class AppResolver {
   @Query((returns) => User)
   @UseGuards(GqlAuthGuardNoValidation)
   whoAmI(@CurrentUser() user: User) {
-    return this.usersService.findOne(user.username);
+    return user;
   }
 
   @UseGuards(LocalGqlAuthGuard)
   @Mutation(() => Auth)
   async login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
     const login = await this.authService.login(loginUserInput);
-    return { token: login.access_token };
+    return { token: login.access_token, user: login.user };
   }
 
   @Mutation(() => Auth)
   async register(@Args('createUserInput') createUserInput: CreateUserInput) {
     const login = await this.authService.register(createUserInput);
-    return { token: login.access_token };
+    return { token: login.accessToken, user: login.user };
   }
 
   @Mutation(() => EmailVerification)
   @UseGuards(GqlAuthGuardNoValidation)
   async verifyEmail(
+    @CurrentUser() user: User,
     @Args('emailVerificationToken') emailVerificationToken: string,
   ) {
     if (!emailVerificationToken)
       throw new BadRequestException('Email verification code cannot be empty');
     const emailVerification = await this.authService.validateEmail(
+      user,
       emailVerificationToken,
     );
     return emailVerification;

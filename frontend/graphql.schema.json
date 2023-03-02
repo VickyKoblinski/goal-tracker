@@ -28,6 +28,22 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "user",
+            "description": "This user",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -92,7 +108,7 @@
         "inputFields": [
           {
             "name": "email",
-            "description": "Email address",
+            "description": "Email",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -211,6 +227,22 @@
         "description": null,
         "fields": [
           {
+            "name": "emailVerified",
+            "description": "Has email been verified?",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "id",
             "description": "User ID",
             "args": [],
@@ -324,8 +356,8 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "password",
-            "description": "Password",
+            "name": "email",
+            "description": "Email",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -340,8 +372,8 @@
             "deprecationReason": null
           },
           {
-            "name": "username",
-            "description": "Username",
+            "name": "password",
+            "description": "Password",
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -678,6 +710,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "emailVerification",
+            "description": "Email verification status",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "EmailVerification",
                 "ofType": null
               }
             },

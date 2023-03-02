@@ -20,6 +20,7 @@ export class EmailVerification {
   id: string;
 
   @Column({ default: false })
+  @Field(() => Boolean, { description: 'Has email been verified?' })
   emailVerified: boolean;
 
   @Column()

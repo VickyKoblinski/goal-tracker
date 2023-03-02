@@ -59,18 +59,22 @@ export class UsersService {
     return this.userRepository.findOne({ where: { username } });
   }
 
-  findByVerificationToken(emailVerificationToken: string) {
+  findOneByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  findVerificationToken(emailVerificationToken: string) {
     return this.emailVerification.findOne({
       where: { emailVerificationToken },
     });
   }
 
-  async setEmailVerified(emailVerificationToken: string) {
-    const emailVerification = await this.findByVerificationToken(
-      emailVerificationToken,
-    );
+  async setEmailVerified(user, emailVerificationToken: string) {
+    const { emailVerification } = user;
 
     if (!emailVerification) throw new BadRequestException('token not found');
+    if (emailVerification.emailVerificationToken !== emailVerificationToken)
+      throw new BadRequestException('invalid token');
 
     // Check expiration, throw error if expired
     if (emailVerification.expires < new Date())

@@ -1,5 +1,4 @@
-import { LoginUserInput } from './../../../api/src/users/dto/login-user.input';
-import { CreateUserInput } from '@/generated/graphql';
+import { CreateUserInput, LoginUserInput } from '@/generated/graphql';
 // ----------------------------------------------------------------------
 
 export type ActionMapType<M extends { [index: string]: any }> = {
@@ -18,6 +17,7 @@ export type AuthUserType = null | Record<string, any>;
 export type AuthStateType = {
   isAuthenticated: boolean;
   isInitialized: boolean;
+  hasVerifiedEmail: boolean;
   user: AuthUserType;
 };
 
@@ -27,6 +27,7 @@ export type JWTContextType = {
   method: string;
   isAuthenticated: boolean;
   isInitialized: boolean;
+  hasVerifiedEmail: boolean;
   user: AuthUserType;
   login: (loginUserInput: LoginUserInput) => Promise<void>;
   register: (createUserInput: CreateUserInput) => Promise<void>;
@@ -34,4 +35,5 @@ export type JWTContextType = {
   loginWithGoogle?: () => void;
   loginWithGithub?: () => void;
   loginWithTwitter?: () => void;
+  verify: (emailVerificationToken: string) => Promise<void>;
 };

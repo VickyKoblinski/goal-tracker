@@ -22,20 +22,24 @@ enum Types {
   LOGIN = 'LOGIN',
   REGISTER = 'REGISTER',
   LOGOUT = 'LOGOUT',
+  VERIFY = 'VERIFY',
 }
 
 type Payload = {
   [Types.INITIAL]: {
     isAuthenticated: boolean;
+    hasVerifiedEmail: boolean;
     user: AuthUserType;
   };
   [Types.LOGIN]: {
     user: AuthUserType;
+    hasVerifiedEmail: boolean;
   };
   [Types.REGISTER]: {
     user: AuthUserType;
   };
   [Types.LOGOUT]: undefined;
+  [Types.VERIFY]: undefined;
 };
 
 type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>];
@@ -45,6 +49,7 @@ type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>];
 const initialState: AuthStateType = {
   isInitialized: false,
   isAuthenticated: false,
+  hasVerifiedEmail: false,
   user: null,
 };
 
@@ -53,6 +58,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
     return {
       isInitialized: true,
       isAuthenticated: action.payload.isAuthenticated,
+      hasVerifiedEmail: action.payload.hasVerifiedEmail,
       user: action.payload.user,
     };
   }
@@ -61,6 +67,7 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: true,
       user: action.payload.user,
+      hasVerifiedEmail: action.payload.hasVerifiedEmail,
     };
   }
   if (action.type === Types.REGISTER) {
@@ -75,6 +82,12 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
       ...state,
       isAuthenticated: false,
       user: null,
+    };
+  }
+  if (action.type === Types.VERIFY) {
+    return {
+      ...state,
+      hasVerifiedEmail: true,
     };
   }
   return state;
@@ -102,11 +115,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = storageAvailable ? localStorage.getItem('accessToken') : '';
-
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const { data } = await whoAmILazyQuery();
+        const { data, error } = await whoAmILazyQuery();
         if (!data) throw new Error('User not found');
 
         const user = data.whoAmI;
@@ -115,6 +127,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           type: Types.INITIAL,
           payload: {
             isAuthenticated: true,
+            hasVerifiedEmail: user.emailVerification.emailVerified, // get result from query
             user,
           },
         });
@@ -123,6 +136,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           type: Types.INITIAL,
           payload: {
             isAuthenticated: false,
+            hasVerifiedEmail: false,
             user: null,
           },
         });
@@ -133,6 +147,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         type: Types.INITIAL,
         payload: {
           isAuthenticated: false,
+          hasVerifiedEmail: false,
           user: null,
         },
       });
@@ -158,6 +173,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       type: Types.LOGIN,
       payload: {
         user: loginUserInput,
+        hasVerifiedEmail: data.login.user.emailVerification.emailVerified,
       },
     });
   }, []);
@@ -171,7 +187,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
     if (!data) throw new Error('Signup failed');
 
-    localStorage.setItem('accessToken', data?.register.token);
+    setSession(data?.register.token);
 
     const { password, ...user } = createUserInput;
 
@@ -180,6 +196,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
       payload: {
         user,
       },
+    });
+  }, []);
+
+  // VERIFY EMAIL
+  const verify = useCallback(async (emailVerificationToken: string) => {
+    const { data } = await verifyEmailMutation({
+      variables: {
+        emailVerificationToken,
+      },
+    });
+    if (!data) throw new Error('verification failed');
+
+    dispatch({
+      type: Types.VERIFY,
     });
   }, []);
 
@@ -195,6 +225,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       isInitialized: state.isInitialized,
       isAuthenticated: state.isAuthenticated,
+      hasVerifiedEmail: state.hasVerifiedEmail,
       user: state.user,
       method: 'jwt',
       login,
@@ -203,8 +234,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
       loginWithTwitter: () => {},
       register,
       logout,
+      verify,
     }),
-    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
+    [
+      state.isAuthenticated,
+      state.isInitialized,
+      state.user,
+      login,
+      logout,
+      register,
+      state.hasVerifiedEmail,
+      verify,
+    ]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
@@ -222,6 +263,13 @@ gql`
   mutation Login($loginUserInput: LoginUserInput!) {
     login(loginUserInput: $loginUserInput) {
       token
+      user {
+        username
+        email
+        emailVerification {
+          emailVerified
+        }
+      }
     }
   }
 `;
@@ -237,8 +285,11 @@ gql`
 gql`
   query WhoAmI {
     whoAmI {
-      id
+      email
       username
+      emailVerification {
+        emailVerified
+      }
     }
   }
 `;
