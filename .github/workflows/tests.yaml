@@ -10,7 +10,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install modules
         run: pnpm install
       - name: Run tests
@@ -24,7 +24,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install modules
         run: pnpm install
       - name: Run tests
@@ -36,10 +36,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install frontend modules
         run: cd frontend && pnpm install
       - name: Start docker compose
         run: docker compose up -d
+      - name: Wait for servers to Start
+        run: cd frontend && npx wait-on http://localhost:3002 http://localhost:3000 http://localhost:7007
       - name: Run tests
         run: cd frontend && npx cypress run
