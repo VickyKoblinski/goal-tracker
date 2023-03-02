@@ -38,6 +38,19 @@ export default class Handlers {
     });
   }
 
+  verify(emailVerificationToken) {
+    return this.wrapper({
+      query: `
+      mutation VerifyEmail($emailVerificationToken: String!) {
+        verifyEmail(emailVerificationToken: $emailVerificationToken) {
+          id
+        }
+      }
+      `,
+      variables: { emailVerificationToken },
+    });
+  }
+
   whoAmI() {
     return this.wrapper({
       query: `
