@@ -2,8 +2,8 @@
   "name": "frontend",
   "private": true,
   "scripts": {
-    "start:dev": "next dev -p 8084",
-    "start": "next start",
+    "start:dev": "next dev -p 8085",
+    "start": "next start -p 8085",
     "build": "next build",
     "build-netlify": "next build && cp -r .next _next && mv _next .next/",
     "export": "yarn build && next export -o _static",
