@@ -1,0 +1,23 @@
+{
+  "name": "goal-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "pnpm --filter=goal-tracker/* run start:dev",
+    "start": "pnpm --filter=goal-tracker/* run start",
+    "build": "pnpm --filter=goal-tracker/* run build",
+    "cy": "pnpm --filter=goal-tracker/frontend run cy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VickyKoblinski/goal-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VickyKoblinski/goal-tracker/issues"
+  },
+  "homepage": "https://github.com/VickyKoblinski/goal-tracker#readme"
+}
