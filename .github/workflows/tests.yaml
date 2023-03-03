@@ -43,27 +43,35 @@ jobs:
         if: ${{ env.ACT }}
         run: sudo apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - uses: actions/checkout@v3
-      - run: npm install pm2@latest -g
-      - name: Start sendgrid mock
-        run: cd api && docker compose up -d
-      - name: Install frontend modules
-        run: cd frontend && pnpm install
-      - name: Build & Start frontend servers
-        run: cd frontend && pnpm run build
-        env:
-          NODE_ENV: cypress
-      - run: cd frontend && pm2 start "pnpm run start" --name "frontend"
-        env:
-          NODE_ENV: cypress
-      - name: Start api server
-        run: cd api && pnpm install && pnpm run build
-        env:
-          NODE_ENV: cypress
-      - name: Start api server
-        run: cd api && pm2 start dist/main.js
-        env:
-          NODE_ENV: cypress
-      - name: Wait for servers to Start
-        run: cd frontend && npx wait-on http://localhost:7007 http://localhost:3000 http://[::1]:3002 --timeout 30000
-      - name: Run tests
-        run: cd frontend && npx cypress run
+      # - run: npm install pm2@latest -g
+      # - name: Start sendgrid mock
+      #   run: cd api && docker compose up -d
+      # - name: Install frontend modules
+      #   run: cd frontend && pnpm install
+      # - name: Build & Start frontend servers
+      #   run: cd frontend && pnpm run build
+      #   env:
+      #     NODE_ENV: cypress
+      # - run: cd frontend && pm2 start "pnpm run start" --name "frontend"
+      #   env:
+      #     NODE_ENV: cypress
+      # - name: Start api server
+      #   run: cd api && pnpm install && pnpm run build
+      #   env:
+      #     NODE_ENV: cypress
+      # - name: Start api server
+      #   run: cd api && pm2 start dist/main.js
+      #   env:
+      #     NODE_ENV: cypress
+      - name: Test
+        uses: cypress-io/github-action@v5
+        with:
+          start: cd ../api && pnpm run start, cd ../api && docker compose up, pnpm run start
+          working-directory: frontend
+          build: cd ../api && pnpm run build, pnpm run build
+          install-command: cd ../api && pnpm install, pnpm install
+          wait-on: "http://localhost:7007, http://localhost:3000, http://[::1]:3002"
+      # - name: Wait for servers to Start
+      #   run: cd frontend && npx wait-on http://localhost:7007 http://localhost:3000 http://[::1]:3002 --timeout 30000
+      # - name: Run tests
+      #   run: cd frontend && npx cypress run
