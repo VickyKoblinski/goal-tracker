@@ -31,7 +31,7 @@ export default function VerifyCodePage() {
   return (
     <>
       <Head>
-        <title> Verify Code | Minimal UI</title>
+        <title> Verify Code | Achieve.guru</title>
       </Head>
 
       <EmailInboxIcon sx={{ mb: 5, height: 96 }} />

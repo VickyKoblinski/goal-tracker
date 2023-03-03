@@ -18,7 +18,7 @@ export default function PageThree() {
   return (
     <>
       <Head>
-        <title> Page Three | Minimal UI</title>
+        <title> Page Three | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

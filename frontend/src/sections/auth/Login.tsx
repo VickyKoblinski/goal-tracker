@@ -16,7 +16,7 @@ export default function Login() {
   return (
     <LoginLayout>
       <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
-        <Typography variant="h4">Sign in to Minimal</Typography>
+        <Typography variant="h4">Sign in to Achieve.guru</Typography>
 
         <Stack direction="row" spacing={0.5}>
           <Typography variant="body2">New user?</Typography>
@@ -33,10 +33,6 @@ export default function Login() {
           />
         </Tooltip>
       </Stack>
-
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert>
 
       <AuthLoginForm />
 

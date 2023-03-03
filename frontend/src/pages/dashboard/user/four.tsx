@@ -18,7 +18,7 @@ export default function PageFour() {
   return (
     <>
       <Head>
-        <title> Page Four | Minimal UI</title>
+        <title> Page Four | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

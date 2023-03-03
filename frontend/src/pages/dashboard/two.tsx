@@ -18,7 +18,7 @@ export default function PageTwo() {
   return (
     <>
       <Head>
-        <title> Page Two | Minimal UI</title>
+        <title> Page Two | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

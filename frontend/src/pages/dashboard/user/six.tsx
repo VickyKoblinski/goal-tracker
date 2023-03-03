@@ -18,7 +18,7 @@ export default function PageSix() {
   return (
     <>
       <Head>
-        <title> Page Six | Minimal UI</title>
+        <title> Page Six | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

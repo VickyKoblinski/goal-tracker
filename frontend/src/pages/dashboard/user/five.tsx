@@ -18,7 +18,7 @@ export default function PageFive() {
   return (
     <>
       <Head>
-        <title> Page Five | Minimal UI</title>
+        <title> Page Five | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

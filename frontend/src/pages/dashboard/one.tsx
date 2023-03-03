@@ -18,7 +18,7 @@ export default function PageOne() {
   return (
     <>
       <Head>
-        <title> Page One | Minimal UI</title>
+        <title> Page One | Achieve.guru</title>
       </Head>
 
       <Container maxWidth={themeStretch ? false : 'xl'}>

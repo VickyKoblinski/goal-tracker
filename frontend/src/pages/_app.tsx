@@ -29,9 +29,6 @@ import { ThemeSettings, SettingsProvider } from '../components/settings';
 import { ApolloProvider } from '@apollo/client';
 import client from '../apollo-client';
 
-// Check our docs
-// https://docs.minimals.cc/authentication/ts-version
-
 import { AuthProvider } from '../auth/JwtContext';
 
 // ----------------------------------------------------------------------
