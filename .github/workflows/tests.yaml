@@ -11,7 +11,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Install modules
         run: pnpm install
       - name: Run tests
@@ -25,7 +25,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Install modules
         run: pnpm install
       - name: Run tests
@@ -42,7 +42,7 @@ jobs:
       - name: Install `Xvfb` and others to run browsers for end-to-end testing in local CI/CD simulations
         if: ${{ env.ACT }}
         run: sudo apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - run: npm install pm2@latest -g
       - name: Start sendgrid mock
         run: cd api && docker compose up -d
