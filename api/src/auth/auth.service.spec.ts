@@ -62,7 +62,7 @@ describe('AuthService', () => {
       user.username = 'testuser';
       user.password = 'testpass';
       const findOneSpy = jest
-        .spyOn(usersService, 'findOne')
+        .spyOn(usersService, 'findOneByEmail')
         .mockResolvedValue(user);
       jest.spyOn(encrypt, 'comparePassword').mockResolvedValue(true);
 
@@ -73,7 +73,7 @@ describe('AuthService', () => {
     });
 
     it('should return null if credentials are invalid', async () => {
-      jest.spyOn(usersService, 'findOne').mockResolvedValue(null);
+      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(null);
 
       const result = await authService.validateUser('testuser', 'testpass');
 
@@ -83,7 +83,9 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should generate a JWT token', async () => {
+      const user = new User();
       const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
+      jest.spyOn(usersService, 'findOneByEmail').mockResolvedValue(user);
 
       const result = await authService.login({
         username: 'testuser',
@@ -94,20 +96,20 @@ describe('AuthService', () => {
         username: 'testuser',
         sub: 1,
       });
-      expect(result).toEqual({ access_token: 'token' });
+      expect(result).toEqual({ access_token: 'token', user });
     });
   });
 
   describe('register', () => {
     it('should return a jwt when a user signs up', async () => {
       const signSpy = jest.spyOn(jwtService, 'sign').mockReturnValue('token');
-      jest.spyOn(usersService, 'create').mockResolvedValue({
-        password: 'hashed',
-        email: 'myemail@email.com',
-        username: 'testuser',
-        id: 'USER_ID',
-        emailVerification: new EmailVerification(),
-      });
+      const user = new User();
+      user.password = 'hashed';
+      user.email = 'myemail@email.com';
+      user.username = 'testuser';
+      user.id = 'USER_ID';
+      user.emailVerification = new EmailVerification();
+      jest.spyOn(usersService, 'create').mockResolvedValue(user);
       const result = await authService.register({
         username: 'testuser',
         password: 'testpass',
@@ -117,7 +119,7 @@ describe('AuthService', () => {
         username: 'testuser',
         sub: 'USER_ID',
       });
-      expect(result).toEqual({ access_token: 'token' });
+      expect(result).toEqual({ accessToken: 'token', user });
     });
   });
 });

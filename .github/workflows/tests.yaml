@@ -32,14 +32,33 @@ jobs:
 
   cypress:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: cypress
     steps:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
       - uses: actions/checkout@v2
+      - name: Install `Xvfb` and others to run browsers for end-to-end testing in local CI/CD simulations
+        if: ${{ env.ACT }}
+        run: sudo apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - name: Start docker compose
-        run: docker compose up -d
-      - name: Install modules
-        run: cd frontend && pnpm install --dev && pnpm install typescript@4.9.5
-      - name: Run tests
-        run: cd frontend && npx cypress run
+        run: cd api && docker compose up -d
+      - name: Cypress run
+        uses: cypress-io/github-action@v5 # use the explicit version number
+        with:
+          install: pnpm install
+          build: pnpm run build
+          start: pnpm run start:prod
+          project: ./frontend
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: frontend/cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: cypress-videos
+          path: frontend/cypress/videos

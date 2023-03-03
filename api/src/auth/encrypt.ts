@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 // Hashes the given password and returns the resulting hash
 export function hashPassword(password) {
@@ -25,6 +26,7 @@ export async function comparePassword(password, hash) {
 
 // Generate a unique token
 export async function generateVerificationToken(): Promise<string> {
-  const token = await bcrypt.hash(Date.now().toString(), 10);
-  return token;
+  const n = crypto.randomInt(0, 1000000);
+  const verificationCode = n.toString().padStart(6, '0');
+  return verificationCode;
 }

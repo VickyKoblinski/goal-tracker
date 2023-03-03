@@ -5,7 +5,10 @@ import { UsersService } from './users/users.service';
 import { User } from './users/entities/user.entity';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { CurrentUser } from './decorators/CurrentUser.decorator';
-import { GqlAuthGuard, LocalGqlAuthGuard } from './auth/gql-auth.guard';
+import {
+  GqlAuthGuardNoValidation,
+  LocalGqlAuthGuard,
+} from './auth/gql-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
@@ -18,31 +21,34 @@ export class AppResolver {
   ) {}
 
   @Query((returns) => User)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlAuthGuardNoValidation)
   whoAmI(@CurrentUser() user: User) {
-    return this.usersService.findOne(user.username);
+    return user;
   }
 
   @UseGuards(LocalGqlAuthGuard)
   @Mutation(() => Auth)
   async login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
     const login = await this.authService.login(loginUserInput);
-    return { token: login.access_token };
+    return { token: login.access_token, user: login.user };
   }
 
   @Mutation(() => Auth)
   async register(@Args('createUserInput') createUserInput: CreateUserInput) {
     const login = await this.authService.register(createUserInput);
-    return { token: login.access_token };
+    return { token: login.accessToken, user: login.user };
   }
 
   @Mutation(() => EmailVerification)
+  @UseGuards(GqlAuthGuardNoValidation)
   async verifyEmail(
+    @CurrentUser() user: User,
     @Args('emailVerificationToken') emailVerificationToken: string,
   ) {
     if (!emailVerificationToken)
       throw new BadRequestException('Email verification code cannot be empty');
     const emailVerification = await this.authService.validateEmail(
+      user,
       emailVerificationToken,
     );
     return emailVerification;

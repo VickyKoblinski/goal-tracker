@@ -49,7 +49,7 @@ describe('App resolvers (supertest)', () => {
 
   describe('login', () => {
     it('get jwt from valid login', async () => {
-      const { email, ...loginUserInput } = createUserInput;
+      const { username, ...loginUserInput } = createUserInput;
       const res = await unauthHandlers.login(loginUserInput);
 
       const { data } = res.body;
@@ -60,7 +60,7 @@ describe('App resolvers (supertest)', () => {
 
     it('get error from invalid login', async () => {
       const loginUserInput = {
-        username: 'john',
+        email: 'john@j.com',
         password: 'changeme2',
       };
 
@@ -72,26 +72,19 @@ describe('App resolvers (supertest)', () => {
   });
 
   describe('whoAmI', () => {
-    it('returns error for not validated email', async () => {
+    it('returns current user even if not validated email', async () => {
       const res = await authHandlers.whoAmI();
-      expect(res.body.errors[0].message).toEqual(
-        'Email address has not been validated',
-      );
+
+      expect(res.body.data.whoAmI.username).toEqual('john');
     });
 
-    it('returns current user', async () => {
+    it('verifies email', async () => {
       const emailRes = await sendgridHandler.get();
       const token =
         emailRes.body[0].personalizations[0].dynamic_template_data
           .verificationToken;
-      await request(app.getHttpServer())
-        .get('/verify')
-        .query({ token })
-        .expect(200);
-
-      const res = await authHandlers.whoAmI();
-      expect(res.body.data.whoAmI.username).toEqual('john');
-      expect(typeof res.body.data.whoAmI.id).toBe('string');
+      const res = await authHandlers.verify(token);
+      expect(res.body.data.verifyEmail.id.length).toBeGreaterThan(0);
     });
 
     it('is unauthorized if bad token is sent', async () => {

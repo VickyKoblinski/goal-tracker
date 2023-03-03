@@ -9,11 +9,4 @@ export class AppController {
   getHello(): string {
     return 'Hello World!';
   }
-
-  @Get('/verify')
-  async verifyEmail(@Query('token') emailVerificationToken) {
-    if (!emailVerificationToken) return null;
-    await this.authService.validateEmail(emailVerificationToken);
-    return 'Verified!';
-  }
 }

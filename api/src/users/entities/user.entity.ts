@@ -46,6 +46,7 @@ export class User {
       cascade: true,
     },
   )
+  @Field(() => EmailVerification, { description: 'Email verification status' })
   @JoinColumn()
   emailVerification: EmailVerification;
 }

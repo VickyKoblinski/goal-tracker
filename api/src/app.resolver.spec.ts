@@ -62,26 +62,28 @@ describe('AppResolver', () => {
   describe('login', () => {
     it('should return an auth object', async () => {
       const mockLoginInput: LoginUserInput = {
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: 'testpassword',
       };
 
       const mockAuth: Auth = {
         token: 'testjwt',
+        user: new User(),
       };
 
       jest.spyOn(authService, 'login').mockImplementation(async () => ({
         access_token: mockAuth.token,
+        user: mockAuth.user,
       }));
 
       const result = await resolver.login(mockLoginInput);
 
-      expect(result).toEqual({ token: mockAuth.token });
+      expect(result).toEqual({ token: mockAuth.token, user: mockAuth.user });
     });
 
     it('should throw an error when invalid credentials are provided', async () => {
       const mockLoginInput: LoginUserInput = {
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: 'wrongpassword',
       };
 
@@ -97,9 +99,10 @@ describe('AppResolver', () => {
 
   describe('register', () => {
     it('should register user and return token', async () => {
+      const user = new User();
       jest
         .spyOn(authService, 'register')
-        .mockResolvedValue({ access_token: 'token' });
+        .mockResolvedValue({ accessToken: 'token', user });
 
       const result = await resolver.register({
         username: 'testuser',
@@ -107,7 +110,7 @@ describe('AppResolver', () => {
         email: 'test@test.com',
       });
 
-      expect(result).toEqual({ token: 'token' });
+      expect(result).toEqual({ token: 'token', user });
     });
   });
 });
