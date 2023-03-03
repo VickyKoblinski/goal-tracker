@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8084",
+    "dev": "next dev -p 3002",
     "start:dev": "next start",
     "build": "next build",
     "build-netlify": "next build && cp -r .next _next && mv _next .next/",
