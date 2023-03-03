@@ -36,12 +36,27 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 7.26.3
+      - name: Install `Xvfb` and others to run browsers for end-to-end testing in local CI/CD simulations
+        if: ${{ env.ACT }}
+        run: sudo apt-get update && apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
       - uses: actions/checkout@v3
+      - run: npm install pm2@latest -g
+      - name: Start sendgrid mock
+        run: cd api && docker compose up -d
       - name: Install frontend modules
         run: cd frontend && pnpm install
-      - name: Start docker compose
-        run: docker compose up -d
+      - name: Build & Start frontend servers
+        run: cd frontend && pnpm run build
+      - run: cd frontend && pm2 start "pnpm run start" --name "frontend"
+      - name: Start api server
+        run: cd api && pnpm install && pnpm run build
+        env:
+          NODE_ENV: cypress
+      - name: Start api server
+        run: cd api && pm2 start dist/main.js
+        env:
+          NODE_ENV: cypress
       - name: Wait for servers to Start
-        run: cd frontend && npx wait-on http://localhost:3002 http://localhost:3000 http://localhost:7007
+        run: cd frontend && npx wait-on http://localhost:7007 http://localhost:3000 http://localhost:3002 --timeout 30000
       - name: Run tests
         run: cd frontend && npx cypress run
