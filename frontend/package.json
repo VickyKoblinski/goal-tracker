@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start:dev": "next dev -p 3002",
-    "start": "next start -p 3002",
+    "start:prod": "next start -p 3002",
     "build": "next build",
     "build-netlify": "next build && cp -r .next _next && mv _next .next/",
     "export": "yarn build && next export -o _static",

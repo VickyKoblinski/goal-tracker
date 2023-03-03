@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "pnpm --filter=goal-tracker/* run start:dev",
-    "start": "pnpm --filter=goal-tracker/* run start",
+    "start:prod": "pnpm --filter=goal-tracker/* run start:prod",
     "build": "pnpm --filter=goal-tracker/* run build",
     "cy": "pnpm --filter=goal-tracker/frontend run cy"
   },
