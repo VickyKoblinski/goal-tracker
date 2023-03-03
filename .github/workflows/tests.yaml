@@ -48,7 +48,11 @@ jobs:
         run: cd frontend && pnpm install
       - name: Build & Start frontend servers
         run: cd frontend && pnpm run build
+        env:
+          NODE_ENV: cypress
       - run: cd frontend && pm2 start "pnpm run start" --name "frontend"
+        env:
+          NODE_ENV: cypress
       - name: Start api server
         run: cd api && pnpm install && pnpm run build
         env:
