@@ -33,6 +33,8 @@ jobs:
 
   cypress:
     runs-on: ubuntu-latest
+    env:
+      NODE_ENV: cypress
     steps:
       - uses: pnpm/action-setup@v2
         with:
