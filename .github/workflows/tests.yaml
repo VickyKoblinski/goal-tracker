@@ -50,7 +50,7 @@ jobs:
           install: pnpm install
           build: pnpm run build
           start: pnpm run start:prod
-          working-directory: frontend
+          project: ./frontend
       - uses: actions/upload-artifact@v3
         if: failure()
         with:

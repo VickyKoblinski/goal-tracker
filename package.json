@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/VickyKoblinski/goal-tracker/issues"
   },
-  "homepage": "https://github.com/VickyKoblinski/goal-tracker#readme"
+  "homepage": "https://github.com/VickyKoblinski/goal-tracker#readme",
+  "devDependencies": {
+    "cypress": "^12.7.0"
+  }
 }

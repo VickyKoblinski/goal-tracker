@@ -3,7 +3,10 @@ lockfileVersion: 5.4
 importers:
 
   .:
-    specifiers: {}
+    specifiers:
+      cypress: ^12.7.0
+    devDependencies:
+      cypress: 12.7.0
 
   api:
     specifiers:
