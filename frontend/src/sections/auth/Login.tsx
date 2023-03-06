@@ -21,7 +21,9 @@ export default function Login() {
         <Stack direction="row" spacing={0.5}>
           <Typography variant="body2">New user?</Typography>
 
-          <Link variant="subtitle2">Create an account</Link>
+          <Link href="/auth/register" variant="subtitle2">
+            Create an account
+          </Link>
         </Stack>
 
         <Tooltip title={method} placement="left">

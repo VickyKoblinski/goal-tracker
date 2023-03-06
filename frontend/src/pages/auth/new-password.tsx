@@ -4,48 +4,42 @@ import NextLink from 'next/link';
 // @mui
 import { Link, Typography } from '@mui/material';
 // layouts
-import CompactLayout from '../layouts/compact';
+import CompactLayout from '../../layouts/compact';
 // routes
-import { PATH_AUTH } from '../routes/paths';
+import { PATH_AUTH } from '../../routes/paths';
 // components
-import Iconify from '../components/iconify';
+import Iconify from '../../components/iconify';
 // sections
-import AuthVerifyCodeForm from '../sections/auth/AuthVerifyCodeForm';
+import AuthNewPasswordForm from '../../sections/auth/AuthNewPasswordForm';
 // assets
-import { EmailInboxIcon } from '../assets/icons';
-import { useAuthContext } from '@/auth/useAuthContext';
-import AuthGuard from '@/auth/AuthGuard';
+import { SentIcon } from '../../assets/icons';
 
 // ----------------------------------------------------------------------
 
-VerifyCodePage.getLayout = (page: React.ReactElement) => (
-  <AuthGuard>
-    <CompactLayout>{page}</CompactLayout>
-  </AuthGuard>
-);
+NewPasswordPage.getLayout = (page: React.ReactElement) => <CompactLayout>{page}</CompactLayout>;
 
 // ----------------------------------------------------------------------
 
-export default function VerifyCodePage() {
-  const { user } = useAuthContext();
+export default function NewPasswordPage() {
   return (
     <>
       <Head>
-        <title> Verify Code | Achieve.guru</title>
+        <title> New Password | Achieve.guru</title>
       </Head>
 
-      <EmailInboxIcon sx={{ mb: 5, height: 96 }} />
+      <SentIcon sx={{ mb: 5, height: 96 }} />
 
       <Typography variant="h3" paragraph>
-        Please check your email!
+        Request sent successfully!
       </Typography>
 
       <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-        We have emailed a 6-digit confirmation code to {user?.email}, please enter the code in below
-        box to verify your email.
+        We&apos;ve sent a 6-digit confirmation email to your email.
+        <br />
+        Please enter the code in below box to verify your email.
       </Typography>
 
-      <AuthVerifyCodeForm />
+      <AuthNewPasswordForm />
 
       <Typography variant="body2" sx={{ my: 3 }}>
         Don’t have a code? &nbsp;

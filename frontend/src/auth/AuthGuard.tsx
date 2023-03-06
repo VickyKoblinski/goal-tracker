@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 // components
 import LoadingScreen from '../components/loading-screen';
 //
-import Login from '../pages/login';
-import Verify from '../pages/verify';
+import Login from '../pages/auth/login';
+import Verify from '../pages/auth/verify';
 import { useAuthContext } from './useAuthContext';
 
 // ----------------------------------------------------------------------

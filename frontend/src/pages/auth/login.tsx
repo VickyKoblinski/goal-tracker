@@ -1,21 +1,21 @@
 // next
 import Head from 'next/head';
 // auth
-import GuestGuard from '../auth/GuestGuard';
+import GuestGuard from '../../auth/GuestGuard';
 // sections
-import Register from '../sections/auth/Register';
+import Login from '../../sections/auth/Login';
 
 // ----------------------------------------------------------------------
 
-export default function RegisterPage() {
+export default function LoginPage() {
   return (
     <>
       <Head>
-        <title>Register</title>
+        <title> Login | Achieve.guru</title>
       </Head>
 
       <GuestGuard>
-        <Register />
+        <Login />
       </GuestGuard>
     </>
   );

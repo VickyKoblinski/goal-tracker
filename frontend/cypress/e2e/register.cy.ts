@@ -3,7 +3,7 @@ describe('register a new user', () => {
   const cypressUser = `cypress-user-${uuid}`;
 
   it('Creates user', () => {
-    cy.visit('/register');
+    cy.visit('/auth/register');
     const username = cy.findByLabelText(/username/i);
     username.type(cypressUser);
 
@@ -26,14 +26,14 @@ describe('register a new user', () => {
 
       const { verificationToken } = dynamic_template_data;
 
-      cy.visit(`/verify?token=${verificationToken}`);
+      cy.visit(`/auth/verify?token=${verificationToken}`);
 
       cy.findByText(`Page One`);
     });
   });
 
   it('Logs in user', () => {
-    cy.visit('/login');
+    cy.visit('/auth/login');
     cy.findByLabelText(/email address/i)
       .clear()
       .type(`${cypressUser}@gmail.com`);
