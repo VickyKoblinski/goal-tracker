@@ -3,8 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserInput } from '@/users/dto/create-user.input';
 import { UsersService } from '@/users/users.service';
-import { comparePassword } from './encrypt';
+import { comparePassword, hashPassword } from './encrypt';
 import { User } from '@/users/entities/user.entity';
+import { SubmitResetPasswordInput } from '@/users/dto/submit-reset-password.input';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +44,7 @@ export class AuthService {
   }
 
   async register(createUserInput: CreateUserInput) {
+    createUserInput.password = hashPassword(createUserInput.password);
     const newUser = await this.usersService.create(createUserInput);
     await this.sendGridService.sendEmailVerification({
       to: newUser.email,
@@ -66,5 +68,14 @@ export class AuthService {
       verificationToken: user.resetPassword.emailVerificationToken,
     });
     return user;
+  }
+
+  async submitResetPassword(
+    submitResetPasswordInput: SubmitResetPasswordInput,
+  ) {
+    submitResetPasswordInput.newPassword = hashPassword(
+      submitResetPasswordInput.newPassword,
+    );
+    return this.usersService.submitResetPassword(submitResetPasswordInput);
   }
 }

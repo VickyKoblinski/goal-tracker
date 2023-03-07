@@ -8,15 +8,8 @@ import {
   JoinColumn,
   ValueTransformer,
 } from 'typeorm';
-import { hashPassword } from '@/auth/encrypt';
 import { IsEmail } from 'class-validator';
 import { ResetPassword } from './reset-password.entity';
-
-const toBcryptHash: ValueTransformer = {
-  from: (databasePassword: string) => databasePassword,
-  to: (entityPassword: string) =>
-    entityPassword && hashPassword(entityPassword),
-};
 
 @ObjectType()
 @Entity()
@@ -34,9 +27,7 @@ export class User {
   @Field(() => String, { description: "User's email address" })
   email: string;
 
-  @Column({
-    transformer: toBcryptHash,
-  })
+  @Column()
   password: string;
 
   @OneToOne(

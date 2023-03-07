@@ -1,3 +1,4 @@
+import { SubmitResetPasswordInput } from './users/dto/submit-reset-password.input';
 import { EmailVerification } from './users/entities/email-verification.entity';
 import { CreateUserInput } from './users/dto/create-user.input';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
@@ -55,9 +56,17 @@ export class AppResolver {
   }
 
   @Mutation(() => User)
-  async resetPassword(@Args('email') email: string) {
+  async createResetPassword(@Args('email') email: string) {
     if (!email) throw new BadRequestException('Email cannot be empty');
 
     return this.authService.resetPassword(email);
+  }
+
+  @Mutation(() => User)
+  async submitResetPassword(
+    @Args('submitResetPasswordInput')
+    submitResetPasswordInput: SubmitResetPasswordInput,
+  ) {
+    return this.authService.submitResetPassword(submitResetPasswordInput);
   }
 }

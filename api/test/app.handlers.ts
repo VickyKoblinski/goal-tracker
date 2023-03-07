@@ -69,7 +69,7 @@ export default class Handlers {
     return this.wrapper({
       query: `
       mutation ResetPassword($email: String!) {
-        resetPassword(email: $email) {
+        createResetPassword(email: $email) {
           resetPassword {
             id
           }
@@ -77,6 +77,19 @@ export default class Handlers {
       }
       `,
       variables: { email },
+    });
+  }
+
+  submitResetPassword(submitResetPasswordInput) {
+    return this.wrapper({
+      query: `
+      mutation SubmitResetPassword($submitResetPasswordInput: SubmitResetPasswordInput!) {
+        submitResetPassword(submitResetPasswordInput: $submitResetPasswordInput) {
+          id
+        }
+      }
+      `,
+      variables: { submitResetPasswordInput },
     });
   }
 }
