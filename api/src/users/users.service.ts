@@ -1,3 +1,4 @@
+import { ResetPassword } from './entities/reset-password.entity';
 import { EmailVerification } from './entities/email-verification.entity';
 import {
   Injectable,
@@ -27,10 +28,12 @@ export class UsersService {
 
   constructor(
     private dataSource: DataSource,
-    @InjectRepository(EmailVerification)
-    private emailVerification: Repository<EmailVerification>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(EmailVerification)
+    private emailVerification: Repository<EmailVerification>,
+    @InjectRepository(ResetPassword)
+    private resetPassword: Repository<ResetPassword>,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
@@ -83,6 +86,18 @@ export class UsersService {
     emailVerification.emailVerified = true;
     await this.emailVerification.save(emailVerification);
     return emailVerification;
+  }
+
+  async createResetPassword(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: { resetPassword: true },
+    });
+
+    const resetPassword = this.resetPassword.create();
+    user.resetPassword = resetPassword;
+    await this.userRepository.save(user);
+    return user;
   }
 
   // update(id: number, updateUserInput: UpdateUserInput) {

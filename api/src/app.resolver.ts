@@ -53,4 +53,11 @@ export class AppResolver {
     );
     return emailVerification;
   }
+
+  @Mutation(() => User)
+  async resetPassword(@Args('email') email: string) {
+    if (!email) throw new BadRequestException('Email cannot be empty');
+
+    return this.authService.resetPassword(email);
+  }
 }

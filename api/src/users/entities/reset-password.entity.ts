@@ -8,15 +8,14 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { IsDate } from 'class-validator';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { generateVerificationToken } from '@/auth/encrypt';
 
 @ObjectType()
 @Entity()
-export class EmailVerification {
+export class ResetPassword {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
-  @Expose()
   id: string;
 
   @Column({ default: false })

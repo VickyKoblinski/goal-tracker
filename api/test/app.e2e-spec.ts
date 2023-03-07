@@ -94,6 +94,24 @@ describe('App resolvers (supertest)', () => {
       expect(errors[0].message).toBe('Unauthorized');
     });
   });
+
+  describe('resetPassword', () => {
+    it('sends email to reset password', async () => {
+      const user = {
+        username: 'test',
+        email: 'resetPassword@test.com',
+        password: 'pass',
+      };
+      await unauthHandlers.register(user);
+      const res = await unauthHandlers.resetPassword(user.email);
+      expect(res.body.data.resetPassword.resetPassword.id).toBeDefined();
+      const emailRes = await sendgridHandler.get();
+      const email = emailRes.body.find(
+        (item) => item.template_id === 'd-verifyEmail',
+      );
+      expect(email.personalizations[0].to[0].email).toEqual(user.email);
+    });
+  });
 });
 
 async function createTestApp() {

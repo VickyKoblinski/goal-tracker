@@ -45,4 +45,27 @@ export class SendGridService {
       },
     });
   }
+
+  sendResetPassword({
+    to,
+    name,
+    verificationToken,
+  }: {
+    to: string;
+    name: string;
+    verificationToken: string;
+  }) {
+    return this.send({
+      from: this.configService.get<string>('SEND_GRID_FROM_NOREPLY'),
+      to,
+      templateId: this.configService.get<string>(
+        'SEND_GRID_TEMPLATE_RESET_PASSWORD_EMAIL',
+      ),
+      dynamicTemplateData: {
+        name,
+        verificationToken,
+        baseUrl: this.configService.get<string>('SEND_GRID_BASE_URL'),
+      },
+    });
+  }
 }

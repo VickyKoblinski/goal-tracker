@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { hashPassword } from '@/auth/encrypt';
 import { IsEmail } from 'class-validator';
+import { ResetPassword } from './reset-password.entity';
 
 const toBcryptHash: ValueTransformer = {
   from: (databasePassword: string) => databasePassword,
@@ -49,4 +50,11 @@ export class User {
   @Field(() => EmailVerification, { description: 'Email verification status' })
   @JoinColumn()
   emailVerification: EmailVerification;
+
+  @OneToOne(() => ResetPassword, (resetPassword) => resetPassword.id, {
+    cascade: true,
+  })
+  @Field(() => ResetPassword, { description: 'Password reset request' })
+  @JoinColumn()
+  resetPassword: ResetPassword;
 }

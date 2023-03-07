@@ -64,4 +64,19 @@ export default class Handlers {
       `,
     });
   }
+
+  resetPassword(email) {
+    return this.wrapper({
+      query: `
+      mutation ResetPassword($email: String!) {
+        resetPassword(email: $email) {
+          resetPassword {
+            id
+          }
+        }
+      }
+      `,
+      variables: { email },
+    });
+  }
 }

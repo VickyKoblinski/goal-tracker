@@ -57,4 +57,14 @@ export class AuthService {
       user: newUser,
     };
   }
+
+  async resetPassword(email: string) {
+    const user = await this.usersService.createResetPassword(email);
+    await this.sendGridService.sendResetPassword({
+      to: user.email,
+      name: user.username,
+      verificationToken: user.resetPassword.emailVerificationToken,
+    });
+    return user;
+  }
 }
