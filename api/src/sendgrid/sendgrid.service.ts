@@ -65,6 +65,7 @@ export class SendGridService {
         name,
         verificationToken,
         baseUrl: this.configService.get<string>('SEND_GRID_BASE_URL'),
+        email: to,
       },
     });
   }
