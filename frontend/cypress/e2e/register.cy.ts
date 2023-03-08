@@ -70,6 +70,7 @@ describe('register a new user', () => {
       .clear()
       .type(`${cypressUser}@gmail.com`);
     cy.findByRole('button', { name: /send request/i }).click();
+    cy.findByText('Request sent successfully!');
 
     cy.request('http://localhost:7007/api/mails').then((response) => {
       const recoveryEmail = response.body.find(
