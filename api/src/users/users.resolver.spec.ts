@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { EmailVerification } from './entities/email-verification.entity';
+import { ResetPassword } from './entities/reset-password.entity';
 import { User } from './entities/user.entity';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
@@ -20,6 +21,10 @@ describe('UsersResolver', () => {
         },
         {
           provide: getRepositoryToken(EmailVerification),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(ResetPassword),
           useClass: Repository,
         },
         {
