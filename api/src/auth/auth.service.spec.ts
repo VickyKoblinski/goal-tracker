@@ -8,6 +8,7 @@ import * as encrypt from './encrypt';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SendGridService } from '@/sendgrid/sendgrid.service';
+import { ResetPassword } from '@/users/entities/reset-password.entity';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -31,6 +32,10 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(EmailVerification),
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(ResetPassword),
           useClass: Repository,
         },
         {

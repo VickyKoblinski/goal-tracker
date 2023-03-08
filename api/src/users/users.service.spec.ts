@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, getDataSourceToken } from '@nestjs/typeorm';
+import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { Repository } from 'typeorm';
 import { EmailVerification } from './entities/email-verification.entity';
+import { ResetPassword } from './entities/reset-password.entity';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+
+const moduleMocker = new ModuleMocker(global);
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -23,6 +27,10 @@ describe('UsersService', () => {
           useClass: Repository,
         },
         {
+          provide: getRepositoryToken(ResetPassword),
+          useClass: Repository,
+        },
+        {
           provide: getDataSourceToken(),
           useValue: {
             manager: {
@@ -31,7 +39,17 @@ describe('UsersService', () => {
           },
         },
       ],
-    }).compile();
+    })
+      .useMocker((token) => {
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockFunctionMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(mockMetadata);
+          return new Mock();
+        }
+      })
+      .compile();
 
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get<Repository<User>>(getRepositoryToken(User));
@@ -55,6 +73,7 @@ describe('UsersService', () => {
           '$2b$10$Dot1qjkYa5IXEs80gzTWQ.Xw.IFgcYat31FhCGIL1m3MueNO9Fxde',
         email: 'john@g.com',
         emailVerification: new EmailVerification(),
+        resetPassword: new ResetPassword(),
       };
 
       jest.spyOn(usersRepository, 'findOne').mockResolvedValue(expectedUser);

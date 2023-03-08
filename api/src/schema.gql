@@ -42,8 +42,6 @@ enum DeleteGoalStrategy {
 type EmailVerification {
   """Has email been verified?"""
   emailVerified: Boolean!
-
-  """User ID"""
   id: ID!
 }
 
@@ -69,9 +67,11 @@ input LoginUserInput {
 
 type Mutation {
   createGoal(createGoalInput: CreateGoalInput!): Goal!
+  createResetPassword(email: String!): User!
   deleteGoal(deleteGoalInput: DeleteGoalInput!): Goal!
   login(loginUserInput: LoginUserInput!): Auth!
   register(createUserInput: CreateUserInput!): Auth!
+  submitResetPassword(submitResetPasswordInput: SubmitResetPasswordInput!): User!
   verifyEmail(emailVerificationToken: String!): EmailVerification!
 }
 
@@ -80,6 +80,23 @@ type Query {
   goals: [Goal!]!
   user(username: String!): User!
   whoAmI: User!
+}
+
+type ResetPassword {
+  """Has email been verified?"""
+  emailVerified: Boolean!
+  id: ID!
+}
+
+input SubmitResetPasswordInput {
+  """Username"""
+  email: String!
+
+  """Email verification token"""
+  emailVerificationToken: String!
+
+  """New password"""
+  newPassword: String!
 }
 
 type User {
@@ -91,6 +108,9 @@ type User {
 
   """User ID"""
   id: ID!
+
+  """Password reset request"""
+  resetPassword: ResetPassword!
 
   """Username"""
   username: ID!

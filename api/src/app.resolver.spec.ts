@@ -7,6 +7,7 @@ import { User } from './users/entities/user.entity';
 import { LoginUserInput } from './users/dto/login-user.input';
 import { Auth } from './auth/entities/auth.entity';
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
+import { ResetPassword } from './users/entities/reset-password.entity';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -47,6 +48,7 @@ describe('AppResolver', () => {
         password: 'testpassword',
         email: 'email@email.com',
         emailVerification: new EmailVerification(),
+        resetPassword: new ResetPassword(),
       };
 
       jest

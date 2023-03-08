@@ -66,6 +66,7 @@ export default function AuthVerifyCodeForm() {
   const onSubmit = async (data: FormValuesProps) => {
     try {
       await verify(data.code1 + data.code2 + data.code3 + data.code4 + data.code5 + data.code6);
+      enqueueSnackbar('Your account has been verified!', { variant: 'success' });
       push(PATH_DASHBOARD.root);
     } catch (error) {
       console.error(error);

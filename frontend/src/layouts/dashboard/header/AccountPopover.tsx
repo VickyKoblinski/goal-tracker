@@ -69,6 +69,7 @@ export default function AccountPopover() {
   return (
     <>
       <IconButtonAnimate
+        aria-label="Account Menu"
         onClick={handleOpenPopover}
         sx={{
           p: 0,

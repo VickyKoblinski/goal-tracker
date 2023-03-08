@@ -1,14 +1,17 @@
+import { ResetPassword } from './entities/reset-password.entity';
 import { EmailVerification } from './entities/email-verification.entity';
 import {
   Injectable,
   MethodNotAllowedException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
+import { SubmitResetPasswordInput } from './dto/submit-reset-password.input';
 
 @Injectable()
 export class UsersService {
@@ -27,10 +30,12 @@ export class UsersService {
 
   constructor(
     private dataSource: DataSource,
-    @InjectRepository(EmailVerification)
-    private emailVerification: Repository<EmailVerification>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(EmailVerification)
+    private emailVerification: Repository<EmailVerification>,
+    @InjectRepository(ResetPassword)
+    private resetPassword: Repository<ResetPassword>,
   ) {}
 
   async create(createUserInput: CreateUserInput) {
@@ -83,6 +88,44 @@ export class UsersService {
     emailVerification.emailVerified = true;
     await this.emailVerification.save(emailVerification);
     return emailVerification;
+  }
+
+  async createResetPassword(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: { resetPassword: true },
+    });
+
+    if (!user) throw new NotFoundException("user doesn't exist");
+
+    const resetPassword = this.resetPassword.create();
+    user.resetPassword = resetPassword;
+    await this.userRepository.save(user);
+    return user;
+  }
+
+  async submitResetPassword(
+    submitResetPasswordInput: SubmitResetPasswordInput,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { email: submitResetPasswordInput.email },
+      relations: { resetPassword: true },
+    });
+
+    if (
+      user.resetPassword.emailVerificationToken !==
+      submitResetPasswordInput.emailVerificationToken
+    )
+      throw new NotFoundException('Token does not exist.');
+
+    if (user.resetPassword.expires < new Date())
+      throw new MethodNotAllowedException('token expired');
+
+    // update password
+    user.password = submitResetPasswordInput.newPassword;
+    this.userRepository.save(user);
+
+    return user;
   }
 
   // update(id: number, updateUserInput: UpdateUserInput) {

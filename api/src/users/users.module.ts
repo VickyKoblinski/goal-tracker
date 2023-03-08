@@ -1,3 +1,4 @@
+import { ResetPassword } from './entities/reset-password.entity';
 import { EmailVerification } from './entities/email-verification.entity';
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -9,6 +10,7 @@ import { User } from './entities/user.entity';
   imports: [
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([EmailVerification]),
+    TypeOrmModule.forFeature([ResetPassword]),
   ],
   providers: [UsersResolver, UsersService],
   exports: [UsersService],

@@ -14,6 +14,7 @@ import { AppResolver } from './app.resolver';
 import { User } from './users/entities/user.entity';
 import { EmailVerification } from './users/entities/email-verification.entity';
 import { SendGridService } from './sendgrid/sendgrid.service';
+import { ResetPassword } from './users/entities/reset-password.entity';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { SendGridService } from './sendgrid/sendgrid.service';
         return {
           type: 'sqlite',
           database: config.get<string>('DB_NAME'),
-          entities: [Goal, User, EmailVerification],
+          entities: [Goal, User, EmailVerification, ResetPassword],
           synchronize: true,
         };
       },

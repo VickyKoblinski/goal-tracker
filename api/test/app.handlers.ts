@@ -64,4 +64,32 @@ export default class Handlers {
       `,
     });
   }
+
+  resetPassword(email) {
+    return this.wrapper({
+      query: `
+      mutation ResetPassword($email: String!) {
+        createResetPassword(email: $email) {
+          resetPassword {
+            id
+          }
+        }
+      }
+      `,
+      variables: { email },
+    });
+  }
+
+  submitResetPassword(submitResetPasswordInput) {
+    return this.wrapper({
+      query: `
+      mutation SubmitResetPassword($submitResetPasswordInput: SubmitResetPasswordInput!) {
+        submitResetPassword(submitResetPasswordInput: $submitResetPasswordInput) {
+          id
+        }
+      }
+      `,
+      variables: { submitResetPasswordInput },
+    });
+  }
 }
