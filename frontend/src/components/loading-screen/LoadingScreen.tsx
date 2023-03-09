@@ -33,7 +33,7 @@ export default function LoadingScreen() {
   }
 
   return (
-    <StyledRoot>
+    <StyledRoot data-testid="loading-screen">
       <m.div
         animate={{
           scale: [1, 0.9, 0.9, 1, 1],

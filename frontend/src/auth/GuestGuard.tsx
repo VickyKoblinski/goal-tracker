@@ -24,7 +24,7 @@ export default function GuestGuard({ children }: GuestGuardProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
-  if (isInitialized === isAuthenticated) {
+  if (!isInitialized || isAuthenticated) {
     return <LoadingScreen />;
   }
 
