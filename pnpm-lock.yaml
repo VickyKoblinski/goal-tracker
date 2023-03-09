@@ -142,6 +142,7 @@ importers:
       '@testing-library/cypress': ^9.0.0
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^14.0.0
+      '@testing-library/user-event': ^14.4.3
       '@types/autosuggest-highlight': ^3.2.0
       '@types/jest': 29.2.4
       '@types/lodash': ^4.14.191
@@ -236,6 +237,7 @@ importers:
       '@testing-library/cypress': 9.0.0_cypress@12.7.0
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 14.0.0_biqbaboplfbrettd7655fr4n2y
+      '@testing-library/user-event': 14.4.3
       '@types/autosuggest-highlight': 3.2.0
       '@types/jest': 29.2.4
       '@types/lodash': 4.14.191
@@ -4114,6 +4116,13 @@ packages:
       '@types/react-dom': 18.0.11
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: true
+
+  /@testing-library/user-event/14.4.3:
+    resolution: {integrity: sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
     dev: true
 
   /@tootallnate/once/1.1.2:
