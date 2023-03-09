@@ -64,6 +64,7 @@ export default function RHFCodes({ keyName = '', inputs = [], ...other }: Props)
           control={control}
           render={({ field, fieldState: { error } }) => (
             <TextField
+              aria-label={`RHFCodes ${keyName} ${index}`}
               {...field}
               error={!!error}
               autoFocus={index === 0}

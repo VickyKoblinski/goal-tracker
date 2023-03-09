@@ -83,14 +83,8 @@ export default function AuthNewPasswordForm() {
   } = methods;
 
   useEffect(() => {
-    console.log({
-      'query.email': query.email,
-      isString: query.email && typeof query.email === 'string',
-    });
     if (query.email && typeof query.email === 'string')
       setTimeout(() => {
-        //   console.log('set value!');
-
         setValue('email', query.email && typeof query.email === 'string' ? query.email : '');
       });
   }, [query.email]);
