@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import AuthResetPasswordForm from './AuthResetPasswordForm';
@@ -67,7 +67,9 @@ describe('AuthResetPasswordForm', () => {
       </MockedProvider>
     );
 
-    userEvent.clear(await screen.findByLabelText('Email address'));
+    await act(async () => {
+      userEvent.clear(await screen.findByLabelText('Email address'));
+    });
     userEvent.click(screen.getByRole('button', { name: /send request/i }));
 
     expect(await screen.findByText(/email is required/i)).toBeInTheDocument();

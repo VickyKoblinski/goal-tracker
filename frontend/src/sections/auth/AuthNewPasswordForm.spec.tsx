@@ -152,12 +152,7 @@ describe('AuthNewPasswordForm', () => {
 
   it('should render correctly with a query parameter', async () => {
     const token = '123456';
-    // jest.mock('next/router', () => ({
-    //   useRouter: () => ({
-    //     push: jest.fn(),
-    //     query: { email: 'test@test.com', code },
-    //   }),
-    // }));
+
     useRouter.mockImplementation(() => ({
       push: jest.fn(),
       query: { email: 'test@test.com', token },
